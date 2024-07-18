@@ -193,6 +193,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         tp_timing.log(),
         zmrw_timing.log(),
         zmdy_timing.log(),
+        gz_timing.log(),
     ]
 
     logger_msg = Message(''.join('\n' + ''.join(_right(m) for m in info) for info in msg_list))
@@ -221,3 +222,8 @@ from . import zongmen__renwu
 zmdy_timing = Monitor(name='宗门丹药', time=24 * 60 * 60)
 zmdy_monitor = Monitor(name='宗门丹药监控', start=True)
 from . import zongmen__danyao
+
+# 灌注
+gz_timing = Monitor(name='灌注')
+gz_monitor = Monitor(name='灌注监控', start=True)
+from . import guanzhu
