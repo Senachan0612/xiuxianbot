@@ -1,3 +1,4 @@
+```text
 .env文件做以下配置
 ### 修仙配置
 
@@ -27,3 +28,4 @@ Default_ShouCao = 12 * 60 * 60
 Default_TuPo = 1 * 30 * 60
 # 宗门任务
 Default_ZongMenRenWu = 1 * 30 * 60
+```
