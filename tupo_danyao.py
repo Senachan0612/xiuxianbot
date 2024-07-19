@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 import asyncio
 
 from . import (
-    GroupIds, BotId, ManagerIds, Task_Level,
+    GroupIds, BotId, ManagerIds,
 )
 from . import (
     LoopEvent, Monitor,
@@ -22,7 +22,7 @@ from . import (
 )
 from . import xxbot
 
-timing = xxbot['dy_timing']
+timing = xxbot['tpd_timing']
 monitor = Monitor(name='突破丹监控', start=True)
 
 # 丹药映射

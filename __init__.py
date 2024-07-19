@@ -180,6 +180,7 @@ class XiuXianBot:
             'cg_timing': Monitor(name='出关', time=get_config('Default_ChuGuan', _type='eval')),
             'tp_timing': Monitor(name='突破', time=get_config('Default_TuPo', _type='eval')),
             'gz_timing': Monitor(name='复读'),
+            'tpd_timing': Monitor(name='突破丹'),
 
             'zmrw_timing': Monitor(name='宗门任务', time=get_config('Default_ZongMenRenWu', _type='eval')),
 
@@ -196,7 +197,7 @@ class XiuXianBot:
 
         msg_list = [
             ['指令', '状态', '备注', '下次执行', ],
-            *[tk.log for _, tk in self.tasks.items()]
+            *[tk.log() for _, tk in self.tasks.items()]
         ]
         msg_str = Message(''.join('\n' + ''.join(_right(m) for m in info) for info in msg_list))
         return msg_str
@@ -226,9 +227,13 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     _msg = str(msg)
     xxbot.is_use_due = '使用' in _msg and '不使用' not in _msg
+    await cmd_use_due.send(Message(f"[CQ:at,qq={event.user_id}]")
+                           + Message(f"肚饿丹{'允许' if xxbot.is_use_due else '禁止'}使用"))
 
 
 """导入功能"""
+# 宗门任务
+Task_Level = get_config('Task_Level', _type='convert', _default=[])
 
 # 收草
 from . import shoucao
@@ -240,7 +245,6 @@ from . import tupo
 from . import tupo_danyao
 
 # 宗门
-Task_Level = get_config('Task_Level', _type='convert', _default=[])
 from . import zongmen__renwu
 
 # 宗门丹药
