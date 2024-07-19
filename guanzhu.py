@@ -42,7 +42,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     uid = event.user_id
     AtUser = Message(f"[CQ:at,qq={uid}] ")
 
-    timing('start', '正在复读')
+    timing('start', msg='正在复读')
     await command_manual.send(AtUser + Message('复读模式已启动！开始复读任意 (空格)结尾命令'))
 
     """监听"""
