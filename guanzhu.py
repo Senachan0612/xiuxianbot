@@ -18,13 +18,15 @@ from . import (
     api_update_state__by_bot_at,
     api_update_state__by_at,
 )
-from . import gz_monitor as monitor
-from . import gz_timing as timing
+from . import xxbot
+
+timing = xxbot['gz_timing']
+monitor = Monitor(name='复读监控', start=True)
 
 """灌注"""
 
 command_manual = on_command("复读", aliases={"复读", "复读模式", "fd"}, rule=to_me(), priority=60, block=True)
-exit_command_manual = on_command("!复读", aliases={"!复读", "!复读模式", "!fd"}, rule=to_me(), priority=60, block=True)
+exit_command_manual = on_command("关闭复读", aliases={"!复读", "!复读模式", "!fd"}, rule=to_me(), priority=60, block=True)
 command_monitor = on_command("", aliases={""}, rule=endswith(' '), priority=60, block=True)
 
 

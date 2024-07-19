@@ -1,5 +1,5 @@
 from nonebot.plugin.on import on_command, on_shell_command, on_regex
-from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
 from nonebot.rule import to_me, keyword
 
@@ -17,17 +17,18 @@ from . import (
     api_update_state__by_bot_at,
     api_update_state__by_at,
 )
-from . import tp_monitor as monitor
-from . import tp_timing as timing
+from . import xxbot
+
+timing = xxbot['tp_timing']
+monitor = Monitor(name='突破监控', start=True)
 
 """突破"""
 
 command = on_command("突破", aliases={"突破", "tp"}, rule=to_me(), priority=60, block=True)
 exit_command = on_command("关闭突破", aliases={"!突破", "!tp"}, rule=to_me(), priority=60, block=True)
 
-command_ture_success = on_command("", aliases={""}, rule=keyword('恭喜道友突破'), priority=100, block=True)
-command_ture_fail = on_command("", aliases={""}, rule=keyword('道友突破失败'), priority=100, block=True)
-# @意 道友突破失败，修为减少551。同时获得神秘的环奈祝福，下次突破成功率增加11道友不要放弃！
+ture_task_finish_pattern = r'(恭喜道友突破|道友突破失败|你没有丹药)'
+command_ture_task_finish = on_regex(pattern=ture_task_finish_pattern, flags=re.I, permission=GROUP)
 
 command_false_time = on_command("", aliases={""}, rule=keyword('目前无法突破'), priority=100, block=True)
 command_false_exp = on_command("", aliases={""}, rule=keyword('道友的修为不足以突破'), priority=100, block=True)
@@ -46,27 +47,13 @@ def _monitor_command_check(event):
 """成功"""
 
 
-@command_ture_success.handle()
+@command_ture_task_finish.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if _monitor_command_check(event):
         return
 
-    msg_str = str(msg)
-    # @金魚 恭喜道友突破练气境初期成功
-    pattern = r'突破(\D+)成功'
-    match = re.search(pattern, msg_str)
-
-    # todo 吃药
-    level = match.group(1).strip()
-
-    monitor.set_time(timing.default_time)
-    monitor('done')
-
-
-@command_ture_fail.handle()
-async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
-    if _monitor_command_check(event):
-        return
+    if '你没有丹药' in str(msg):
+        xxbot.is_use_due = False
 
     monitor.set_time(timing.default_time)
     monitor('done')
@@ -136,7 +123,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
         went_await = loop.add(loop.loop_await_cmd('tupo', monitor=monitor))
 
-        reply = True and reply_01 or reply_02
+        reply = reply_02 if xxbot.is_use_due else reply_01
         went_send = loop.add(loop.loop_send_cmd('tupo', cmd=command, msg=reply))
 
         # 执行监听

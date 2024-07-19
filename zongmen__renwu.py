@@ -20,8 +20,10 @@ from . import (
     api_update_state__by_bot_at,
     api_update_state__by_at,
 )
-from . import zmrw_monitor as monitor
-from . import zmrw_timing as timing
+from . import xxbot
+
+timing = xxbot['zmrw_timing']
+monitor = Monitor(name='宗门任务监控', start=True)
 
 TaskList = {
     # 2% 挑战

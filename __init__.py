@@ -149,9 +149,7 @@ def api_update_state__by_at(event, timing, state):
     api_update_state(state, event, timing, bot_event=False, at_me=True)
 
 
-"""查询状态"""
-
-command = on_command("修仙信息", aliases={"修仙状态", "修仙信息", "xxzt", "xxxx"}, rule=to_me(), priority=60, block=True)
+"""xxbot"""
 
 
 class XiuXianBot:
@@ -169,61 +167,90 @@ class XiuXianBot:
         # 没有肚饿丹
         self.no_due = False
 
-    def is_use_due(self):
-        """是否使用肚饿丹"""
+        self.is_use_due = False
+
+        self.tasks = self.load_tasks()
+
+    def __getitem__(self, item):
+        return self.tasks[item]
+
+    @staticmethod
+    def load_tasks():
+        return {
+            'cg_timing': Monitor(name='出关', time=get_config('Default_ChuGuan', _type='eval')),
+            'tp_timing': Monitor(name='突破', time=get_config('Default_TuPo', _type='eval')),
+            'gz_timing': Monitor(name='复读'),
+
+            'zmrw_timing': Monitor(name='宗门任务', time=get_config('Default_ZongMenRenWu', _type='eval')),
+
+            'sc_timing': Monitor(name='收草', time=get_config('Default_ShouCao', _type='eval')),
+            'dx_timing': Monitor(name='雕像', time=24 * 60 * 60),
+            'zmdy_timing': Monitor(name='宗门丹药', time=24 * 60 * 60),
+        }
+
+    def status(self):
+        """打印状态"""
+
+        def _right(text):
+            return '{: <10}'.format(text)
+
+        msg_list = [
+            ['指令', '状态', '备注', '下次执行', ],
+            *[tk.log for _, tk in self.tasks.items()]
+        ]
+        msg_str = Message(''.join('\n' + ''.join(_right(m) for m in info) for info in msg_list))
+        return msg_str
 
 
-@command.handle()
+xxbot = XiuXianBot()
+
+cmd_status = on_command("修仙信息", aliases={"修仙状态", "修仙信息", "xxzt", "xxxx"}, rule=to_me(), priority=60, block=True)
+
+
+@cmd_status.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not api_check_config(event, at_me=True):
         return
 
-    def _right(text):
-        return '{: <10}'.format(text)
+    msg = Message(f"[CQ:at,qq={event.user_id}]") + xxbot.status()
+    await cmd_status.send(msg)
 
-    now_date = datetime.datetime.now()
 
-    def _date(_seconds):
-        _dt = now_date + relativedelta(seconds=_seconds)
-        return _dt.strftime('%Y-%m-%d %H:%M:%S')
+cmd_use_due = on_command("肚饿丹", aliases={"肚饿丹"}, rule=to_me(), priority=60, block=True)
 
-    msg_list = [
-        ['指令', '状态', '备注', '下次执行', ],
-        sc_timing.log(),
-        tp_timing.log(),
-        zmrw_timing.log(),
-        zmdy_timing.log(),
-        gz_timing.log(),
-    ]
 
-    logger_msg = Message(''.join('\n' + ''.join(_right(m) for m in info) for info in msg_list))
-    msg = Message(f"[CQ:at,qq={event.user_id}]") + logger_msg
-    await command.send(msg)
+@cmd_use_due.handle()
+async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    if not api_check_config(event, at_me=True):
+        return
+
+    _msg = str(msg)
+    xxbot.is_use_due = '使用' in _msg and '不使用' not in _msg
 
 
 """导入功能"""
+
 # 收草
-sc_timing = Monitor(name='收草', time=get_config('Default_ShouCao', _type='eval'))
-sc_monitor = Monitor(name='收草监控', start=True)
 from . import shoucao
 
 # 突破
-tp_timing = Monitor(name='突破', time=get_config('Default_TuPo', _type='eval'))
-tp_monitor = Monitor(name='突破监控', start=True)
 from . import tupo
+
+# 突破丹
+from . import tupo_danyao
 
 # 宗门
 Task_Level = get_config('Task_Level', _type='convert', _default=[])
-zmrw_timing = Monitor(name='宗门任务', time=get_config('Default_ZongMenRenWu', _type='eval'))
-zmrw_monitor = Monitor(name='宗门任务监控', start=True)
 from . import zongmen__renwu
 
 # 宗门丹药
-zmdy_timing = Monitor(name='宗门丹药', time=24 * 60 * 60)
-zmdy_monitor = Monitor(name='宗门丹药监控', start=True)
 from . import zongmen__danyao
 
+# 雕像
+from . import diaoxiang
+
 # 灌注
-gz_timing = Monitor(name='复读')
-gz_monitor = Monitor(name='复读监控', start=True)
 from . import guanzhu
+
+# 出关
+from . import chuguan

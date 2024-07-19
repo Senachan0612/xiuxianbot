@@ -19,7 +19,6 @@ StateInit = [
     StateInfo('start', 10, '启动'),
     StateInfo('running', 20, '执行中'),
     StateInfo('waiting', 30, '等待中'),
-    StateInfo('waiting', 30, '等待中'),
     StateInfo('pause', 80, '暂停'),
     StateInfo('regular', 90, '定时'),
     StateInfo('done', 99, '结束'),
