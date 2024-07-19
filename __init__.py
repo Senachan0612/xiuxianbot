@@ -224,6 +224,6 @@ zmdy_monitor = Monitor(name='宗门丹药监控', start=True)
 from . import zongmen__danyao
 
 # 灌注
-gz_timing = Monitor(name='灌注')
-gz_monitor = Monitor(name='灌注监控', start=True)
+gz_timing = Monitor(name='复读')
+gz_monitor = Monitor(name='复读监控', start=True)
 from . import guanzhu
