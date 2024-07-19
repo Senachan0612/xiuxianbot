@@ -20,7 +20,7 @@ from . import (
 )
 from . import xxbot
 
-timing = xxbot['sc_timing']
+timing = xxbot['cg_timing']
 monitor = Monitor(name='出关监控', start=True)
 pause_tp_timing = xxbot['tp_timing']
 pause_zmrw_timing = xxbot['zmrw_timing']
