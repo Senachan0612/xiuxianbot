@@ -65,6 +65,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         timing('running')
 
         await command.send(AtBot + Message('灵石出关'))
+        await asyncio.sleep(5)
         await command.send(AtBot + Message('闭关'))
 
         # 执行等待
