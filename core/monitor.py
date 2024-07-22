@@ -18,6 +18,14 @@ class Monitor(TimingBase):
         # 命令执行时间
         self.exec_time = False
 
+    def init(self, *args, **kwargs):
+        """初始化"""
+        self.time = self.default_time
+        self.update_time = False
+        self.exec_time = False
+
+        return super(Monitor, self).init(*args, **kwargs)
+
     @staticmethod
     def dt_string(dt=False):
         """格式化日期"""
