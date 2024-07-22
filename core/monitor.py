@@ -6,17 +6,18 @@ from . import TimingBase
 
 
 class Monitor(TimingBase):
-    def __init__(self, name=False, time=0, start=False):
-        super(Monitor, self).__init__(name, start=start)
+    # 等待时间
+    time = False
+    # 命令更新时间
+    update_time = False
+    # 命令执行时间
+    exec_time = False
 
+    def __init__(self, name=False, time=0, start=False):
         # 默认等待时间 (秒)
         self.default_time = time
-        # 等待时间
-        self.time = time
-        # 命令更新时间
-        self.update_time = False
-        # 命令执行时间
-        self.exec_time = False
+
+        super(Monitor, self).__init__(name, start=start)
 
     def init(self, *args, **kwargs):
         """初始化"""
