@@ -248,13 +248,8 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     """监听"""
     while True:
-        if timing.check('is_finish'):
-            break
-
+        # 等待悬赏完成
         await timing.sleep()
-
-        if timing.check('is_finish'):
-            break
 
         timing('running')
         monitor('init', start=True)
@@ -276,6 +271,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         # 初始化
         _monitor = await _xsl_cs(command, event)
         if not _monitor.check('is_done'):
+            break
+
+        # 走完结算后视为完成单次流程 再此处结束
+        if timing.check('is_finish'):
             break
 
         # 接取
