@@ -68,7 +68,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     time, unit = float(match.group(1)), match.group(2).strip()
 
     if unit == '小时':
-        time *= 60 * 60
+        time *= 60 * 60 + 60
 
     monitor.set_time(time)
     monitor('done')

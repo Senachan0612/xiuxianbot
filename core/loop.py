@@ -44,24 +44,23 @@ class LoopEvent(TimingBase):
             return bool(self.task)
         return self.task.get(index)
 
-    async def loop_send_cmd(self, index, *, cmd, msg,
-                            await_time=Loop_Await_Time, send_time=Loop_Send_Time, count=Loop_Max_Count):
+    async def loop_send_cmd(self, index, *, cmd, msg, time=Loop_Send_Time, count=Loop_Max_Count):
         """异步发送指令"""
         if not self.wait_task(index, count=count):
             return
 
-        await_time += 1
-        time = send_time - await_time
+        time_split01 = time // 2
+        time_split02 = time - time_split01
         while self.check_task(index):
             count -= 1
             if count < 0:
                 break
 
             await cmd.send(msg)
-            await asyncio.sleep(await_time)
+            await asyncio.sleep(time_split01)
             if not self.check_task(index):
                 break
-            await asyncio.sleep(time)
+            await asyncio.sleep(time_split02)
 
         self.finish_task(index, drop=True)
 

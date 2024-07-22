@@ -1,4 +1,7 @@
-"""导入依赖"""
+"""修仙辅助插件"""
+__author__ = "Sena"
+__version__ = "1.0.0"
+
 import nonebot
 from nonebot.rule import to_me
 from nonebot.params import CommandArg
@@ -183,6 +186,7 @@ class XiuXianBot:
             'tpd_timing': Monitor(name='突破丹'),
 
             'zmrw_timing': Monitor(name='宗门任务', time=get_config('Default_ZongMenRenWu', _type='eval')),
+            'xsl_timing': Monitor(name='悬赏令'),
 
             'sc_timing': Monitor(name='收草', time=get_config('Default_ShouCao', _type='eval')),
             'dx_timing': Monitor(name='雕像', time=24 * 60 * 60),
@@ -228,7 +232,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     _msg = str(msg)
     xxbot.is_use_due = '使用' in _msg and '不使用' not in _msg
     await cmd_use_due.send(Message(f"[CQ:at,qq={event.user_id}]")
-                           + Message(f"肚饿丹{'允许' if xxbot.is_use_due else '禁止'}使用"))
+                           + Message(f"已{'允许' if xxbot.is_use_due else '禁止'}使用肚饿丹"))
 
 
 """导入功能"""
@@ -258,3 +262,6 @@ from . import guanzhu
 
 # 出关
 from . import chuguan
+
+# 悬赏令
+from . import xuanshang
