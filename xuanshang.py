@@ -22,7 +22,7 @@ from . import (
 )
 from . import xxbot
 
-AtBot = Message(f"[CQ:at,qq={BotId}]")
+AtBot = Message(f"[CQ:at,qq={BotId}] ")
 
 timing = xxbot['xsl_timing']
 monitor = Monitor(name='宗门任务监控', start=True)
@@ -79,12 +79,13 @@ def xsl_format(_task):
     """格式化输出悬赏令"""
     pattern = re.compile(r'预计需(\d+)分钟(?:，可额外获得奖励：([\u4e00-\u9fa5]+))?')
     matches = pattern.findall(_task)
-    return [(_i, _t, _n) for _i, (_t, _n) in enumerate(matches)]
+    return [(_i, float(_t) * 60, _n) for _i, (_t, _n) in enumerate(matches, start=1)]
 
 
 def xsl_get_target(_task):
     """获取最有效悬赏"""
-    _map = {task_mapping.get(_n, float('inf')): (_i, _t) for _i, _t, _n in _task}
+    _format = xsl_format(str(_task))
+    _map = {task_mapping.get(_n, float('inf')): (_i, _t, _n) for _i, _t, _n in _format}
     return _map[min(_map)]
 
 
@@ -125,8 +126,11 @@ Reply_xsl_js = AtBot + Message(f'悬赏令结算')
 
 xsl_js_monitor = Monitor(name='悬赏令结算监控', start=True)
 
-command_js_ture = on_command("", aliases={""}, rule=keyword('悬赏令结算'), priority=100, block=True)
-command_cs_false = on_command("", aliases={""}, rule=keyword('进行中的悬赏令'), priority=100, block=True)
+js_ture_pattern = r'(悬赏令结算|道友现在什么都没干呢)'
+command_js_ture = on_regex(pattern=js_ture_pattern, flags=re.I, permission=GROUP, priority=100, block=True)
+command_js_false = on_command("", aliases={""}, rule=keyword('进行中的悬赏令'), priority=100, block=True)
+js_error_pattern = r'(道友现在在闭关呢|小心走火入魔)'
+command_js_error = on_regex(pattern=js_error_pattern, flags=re.I, permission=GROUP, priority=100, block=True)
 
 
 @command_js_ture.handle()
@@ -137,19 +141,27 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     xsl_js_monitor('done')
 
 
-@command_cs_false.handle()
+@command_js_false.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if api_check_task__exec_by_bot_at(event, timing, xsl_js_monitor):
         return
 
     msg_str = str(msg)
-    pattern = r'：预计([\d.]+)(\D+)后可结束'
+    pattern = r'预计(\d+\.\d+)(分钟)后可结束'
     match = re.search(pattern, msg_str)
     time, unit = float(match.group(1)), match.group(2).strip()
     if unit == '分钟':
         time *= 60
 
     xsl_js_monitor.set_time(time)
+    xsl_js_monitor('next')
+
+
+@command_js_error.handle()
+async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    if api_check_task__exec_by_bot_at(event, timing, xsl_js_monitor):
+        return
+
     xsl_js_monitor('error')
 
 
@@ -165,7 +177,7 @@ async def _xsl_js(_cmd, _event):
     await went_await
     await went_send
 
-    return xsl_cs_monitor
+    return xsl_js_monitor
 
 
 """悬赏令 接取"""
@@ -196,8 +208,7 @@ async def _xsl_jq(_cmd, _event, _task):
     """悬赏令接取"""
     timing(msg='悬赏令接取')
 
-    _task_format = xsl_format(_task)
-    _task_id, _task_time, _ = xsl_get_target(_task_format)
+    _task_id, _task_time, _ = xsl_get_target(_task)
     _reply = AtBot + Message(f'悬赏令接取 {_task_id}')
 
     # 处理悬赏接取
@@ -205,13 +216,13 @@ async def _xsl_jq(_cmd, _event, _task):
     loop = LoopEvent(_event, name='xsl_jq_loop')
 
     went_await = loop.add(loop.loop_await_cmd('xsl js', monitor=xsl_jq_monitor))
-    went_send = loop.add(loop.loop_send_cmd('xsl js', cmd=_cmd, msg=Reply_xsl_js))
+    went_send = loop.add(loop.loop_send_cmd('xsl js', cmd=_cmd, msg=_reply))
 
     await went_await
     await went_send
 
-    xsl_cs_monitor.set_time(_task_time)
-    return xsl_cs_monitor
+    xsl_jq_monitor.set_time(_task_time)
+    return xsl_jq_monitor
 
 
 """悬赏令"""
@@ -235,9 +246,6 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
     timing('start')
 
-    # 加载异步监听
-    loop = LoopEvent(event)
-
     """监听"""
     while True:
         if timing.check('is_finish'):
@@ -257,11 +265,13 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
             break
 
         # 结算
-        _monitor = await _xsl_cs(command, event)
-        if not _monitor.check('is_done'):
+        _monitor = await _xsl_js(command, event)
+        if _monitor.check('is_next'):
             timing.set_time(_monitor.time)
             timing('waiting', msg='悬赏令结算CD')
             continue
+        elif not _monitor.check('is_done'):
+            break
 
         # 初始化
         _monitor = await _xsl_cs(command, event)

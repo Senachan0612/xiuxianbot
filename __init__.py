@@ -229,7 +229,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     _msg = str(msg)
     xxbot.is_use_due = '使用' in _msg and '不使用' not in _msg
     await cmd_use_due.send(Message(f"[CQ:at,qq={event.user_id}]")
-                           + Message(f"肚饿丹{'允许' if xxbot.is_use_due else '禁止'}使用"))
+                           + Message(f"已{'允许' if xxbot.is_use_due else '禁止'}使用肚饿丹"))
 
 
 """导入功能"""

@@ -6,7 +6,7 @@ from collections import defaultdict, namedtuple
 config_dict = nonebot.get_driver().config.dict()
 
 Loop_Max_Count = float(config_dict.get('Max_Loop'.lower(), 'inf'))
-Loop_Send_Time = float(config_dict.get('Loop_Send_Time'.lower(), 5))
+Loop_Send_Time = float(config_dict.get('Loop_Send_Time'.lower(), 10))
 Loop_Await_Time = float(config_dict.get('Loop_Await_Time'.lower(), 1))
 
 # 状态
@@ -21,6 +21,7 @@ StateInit = [
     StateInfo('waiting', 30, '等待中'),
     StateInfo('pause', 80, '暂停'),
     StateInfo('regular', 90, '定时'),
+    StateInfo('next', 95, '跳过'),
     StateInfo('done', 99, '结束'),
 ]
 
