@@ -35,7 +35,7 @@ command_ture_finish = on_command("", aliases={""}, rule=keyword('闭关结束'),
 
 @command_ture_finish.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
-    if not api_check_task__exec_by_bot_at(event):
+    if api_check_task__exec_by_bot_at(event):
         return
 
     for t in [pause_tp_timing, pause_zmrw_timing]:
