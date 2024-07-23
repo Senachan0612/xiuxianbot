@@ -286,7 +286,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         timing.set_time(_monitor.time)
         timing('waiting', msg='悬赏令接取成功')
 
-    timing.init()
+    timing('init', msg='执行结束')
 
 
 @exit_command.handle()

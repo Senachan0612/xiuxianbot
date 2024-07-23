@@ -250,6 +250,6 @@ async def _task_completed(_cmd, _event):
 @exit_command.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     api_update_state__by_at(event, timing, state={
-        'state': 'exit',
+        'state': 'done',
         'msg': '计划退出',
     })
