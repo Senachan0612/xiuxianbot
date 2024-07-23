@@ -9,7 +9,8 @@ from dateutil.relativedelta import relativedelta
 import asyncio
 
 from . import (
-    GroupIds, BotId, ManagerIds, Task_Level,
+    GroupIds, BotId, ManagerIds,
+    AtBot,
 )
 from . import (
     LoopEvent, Monitor,
@@ -22,10 +23,8 @@ from . import (
 )
 from . import xxbot
 
-AtBot = Message(f"[CQ:at,qq={BotId}] ")
-
 timing = xxbot['xsl_timing']
-monitor = Monitor(name='宗门任务监控', start=True)
+monitor = Monitor(name='悬赏令监控', start=True)
 cg_timing = xxbot['cg_timing']
 
 TaskList = [

@@ -21,6 +21,8 @@ from dateutil.relativedelta import relativedelta
 
 from .core import LoopEvent, Monitor
 
+"""常用工具"""
+
 config_dict = nonebot.get_driver().config.dict()
 
 # 定义支持的操作符
@@ -152,6 +154,12 @@ def api_update_state__by_at(event, timing, state):
     api_update_state(state, event, timing, bot_event=False, at_me=True)
 
 
+"""常用参数"""
+# at bot 消息
+AtBot = Message(f"[CQ:at,qq={BotId}] ")
+# 宗门任务
+Task_Level = get_config('Task_Level', _type='convert', _default=[])
+
 """xxbot"""
 
 
@@ -251,9 +259,6 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 
 """导入功能"""
-# 宗门任务
-Task_Level = get_config('Task_Level', _type='convert', _default=[])
-
 # 收草
 from . import shoucao
 
