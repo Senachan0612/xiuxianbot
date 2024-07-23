@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 import asyncio
 
 from . import (
-    GroupIds, BotId, ManagerIds, Task_Level,
+    GroupIds, BotId, ManagerIds
 )
 from . import (
     LoopEvent, Monitor,
