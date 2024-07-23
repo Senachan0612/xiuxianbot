@@ -1,6 +1,6 @@
 """修仙辅助插件"""
 __author__ = "Sena"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import nonebot
 from nonebot.rule import to_me
@@ -157,8 +157,6 @@ def api_update_state__by_at(event, timing, state):
 """常用参数"""
 # at bot 消息
 AtBot = Message(f"[CQ:at,qq={BotId}] ")
-# 宗门任务
-Task_Level = get_config('Task_Level', _type='convert', _default=[])
 
 """xxbot"""
 

@@ -4,6 +4,8 @@ from nonebot.params import CommandArg
 from nonebot.rule import to_me, keyword
 
 import re
+import datetime
+from dateutil.relativedelta import relativedelta
 
 from . import (
     GroupIds, BotId, ManagerIds,
@@ -33,6 +35,7 @@ command_ture_task_finish = on_regex(pattern=ture_task_finish_pattern, flags=re.I
 command_false_time = on_command("", aliases={""}, rule=keyword('目前无法突破'), priority=100, block=True)
 command_false_exp = on_command("", aliases={""}, rule=keyword('道友的修为不足以突破'), priority=100, block=True)
 command_false_hp = on_command("", aliases={""}, rule=keyword('道友状态不佳，无法突破'), priority=100, block=True)
+command_false_count = on_command("", aliases={""}, rule=keyword('超过今日上限，道友莫要心急，请先巩固境界'), priority=100, block=True)
 
 
 def _monitor_command_check(event):
@@ -95,6 +98,21 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
     # @永乐大帝 道友状态不佳，无法突破！(气血不足)
     monitor('pause')
+
+
+@command_false_count.handle()
+async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    if api_check_task__exec_by_bot_at(event, timing, monitor):
+        return
+
+    # 次日凌晨00:30再启
+    now_dt = datetime.datetime.now()
+    next_dt = now_dt.replace(hour=0, minute=30, second=0, microsecond=0) + relativedelta(days=1)
+    time = (next_dt - now_dt).seconds
+
+    timing('regular', msg='定时任务')
+    timing.set_time(time)
+    monitor('regular')
 
 
 """core"""

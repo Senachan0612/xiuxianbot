@@ -90,7 +90,7 @@ class LoopEvent(TimingBase):
         """
         self.create_task(index)
 
-        while not monitor.check('is_pause'):
+        while monitor.check('is_pause'):
             count -= 1
             if count < 0:
                 monitor('error')

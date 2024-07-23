@@ -10,12 +10,13 @@ import asyncio
 
 from . import (
     GroupIds, BotId, ManagerIds,
-    AtBot, Task_Level,
+    AtBot,
 )
 from . import (
     LoopEvent, Monitor,
 )
 from . import (
+    get_config,
     api_check_config,
     api_check_task__exec_by_bot_at,
     api_update_state__by_bot_at,
@@ -47,6 +48,12 @@ TaskList = {
         '宗门高层有个人给你了一个宗门采购清单',  # 正当采购
     ],
 }
+
+# 宗门任务
+Task_Level = get_config('Task_Level', _type='convert', _default=[])
+# 宗门任务定时
+Default_Timing_ZongMenRenWu = get_config('Default_Timing_ZongMenRenWu', _type='convert', _default=[]) + ['12', '00']
+Hour, Minute = [int(x) for x in Default_Timing_ZongMenRenWu[:2]]
 
 
 def get_task(_level=Task_Level):
@@ -105,9 +112,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if api_check_task__exec_by_bot_at(event, timing, local_monitor):
         return
 
-    # 次日凌晨00:30再启
+    # 次日凌晨?:?再启
     now_dt = datetime.datetime.now()
-    next_dt = now_dt.replace(hour=0, minute=30, second=0, microsecond=0) + relativedelta(days=1)
+    next_dt = now_dt.replace(hour=Hour, minute=Minute, second=0, microsecond=0) + relativedelta(days=1)
     time = (next_dt - now_dt).seconds
 
     timing('regular', msg='定时任务')
