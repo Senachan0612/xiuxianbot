@@ -9,7 +9,8 @@ from dateutil.relativedelta import relativedelta
 import asyncio
 
 from . import (
-    GroupIds, BotId, ManagerIds, Task_Level,
+    GroupIds, BotId, ManagerIds,
+    AtBot, Task_Level,
 )
 from . import (
     LoopEvent, Monitor,
@@ -63,9 +64,9 @@ local_monitor = Monitor(name='任务刷新监控', start=True)
 
 """宗门任务"""
 
-Reply_Receive = Message(f"[CQ:at,qq={BotId}]") + Message(f" 宗门任务接取")
-Reply_Refresh = Message(f"[CQ:at,qq={BotId}]") + Message(f" 宗门任务刷新")
-Reply_Completed = Message(f"[CQ:at,qq={BotId}]") + Message(f" 宗门任务完成")
+Reply_Receive = AtBot + Message(f" 宗门任务接取")
+Reply_Refresh = AtBot + Message(f" 宗门任务刷新")
+Reply_Completed = AtBot + Message(f" 宗门任务完成")
 
 command = on_command("宗门任务", aliases={"宗门任务", "zmrw"}, rule=to_me(), priority=60, block=True)
 exit_command = on_command("关闭宗门任务", aliases={"!宗门任务", "!zmrw"}, rule=to_me(), priority=60, block=True)
@@ -211,7 +212,7 @@ async def _task_refresh(_cmd, _event):
         loop = LoopEvent(_event, name='zmrw_sx_loop')
 
         went_await = loop.add(loop.loop_await_cmd('宗门任务 刷新', monitor=local_monitor))
-        went_send = loop.add(loop.loop_send_cmd('宗门任务 刷新', cmd=_cmd, msg=Reply_Refresh, send_time=5 * 60))
+        went_send = loop.add(loop.loop_send_cmd('宗门任务 刷新', cmd=_cmd, msg=Reply_Refresh, time=5 * 60))
         await went_await
         await went_send
 
@@ -250,5 +251,5 @@ async def _task_completed(_cmd, _event):
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     api_update_state__by_at(event, timing, state={
         'state': 'done',
-        'msg': '手动结束',
+        'msg': '计划退出',
     })

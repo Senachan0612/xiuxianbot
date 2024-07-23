@@ -21,6 +21,8 @@ from dateutil.relativedelta import relativedelta
 
 from .core import LoopEvent, Monitor
 
+"""常用工具"""
+
 config_dict = nonebot.get_driver().config.dict()
 
 # 定义支持的操作符
@@ -152,6 +154,12 @@ def api_update_state__by_at(event, timing, state):
     api_update_state(state, event, timing, bot_event=False, at_me=True)
 
 
+"""常用参数"""
+# at bot 消息
+AtBot = Message(f"[CQ:at,qq={BotId}] ")
+# 宗门任务
+Task_Level = get_config('Task_Level', _type='convert', _default=[])
+
 """xxbot"""
 
 
@@ -195,16 +203,32 @@ class XiuXianBot:
 
     def status(self):
         """打印状态"""
+        return (
+                Message('####指令\n') + self.cmd_status()
+                + Message('\n\n####状态\n') + self.bot_status()
+        )
 
-        def _right(text):
-            return '{: <10}'.format(text)
+    def bot_status(self):
+        """bot状态"""
+        msg_list = [
+            ('肚饿丹', self.is_use_due and '允许' or '禁止'),
+        ]
+        msg_str = Message('\n'.join(''.join(self._right(m) for m in info) for info in msg_list))
+        return msg_str
+
+    def cmd_status(self):
+        """命令状态"""
 
         msg_list = [
             ['指令', '状态', '备注', '下次执行', ],
             *[tk.log() for _, tk in self.tasks.items()]
         ]
-        msg_str = Message(''.join('\n' + ''.join(_right(m) for m in info) for info in msg_list))
+        msg_str = Message('\n'.join(''.join(self._right(m) for m in info) for info in msg_list))
         return msg_str
+
+    @staticmethod
+    def _right(text):
+        return '{: <10}'.format(text)
 
 
 xxbot = XiuXianBot()
@@ -217,7 +241,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not api_check_config(event, at_me=True):
         return
 
-    msg = Message(f"[CQ:at,qq={event.user_id}]") + xxbot.status()
+    msg = xxbot.status()
     await cmd_status.send(msg)
 
 
@@ -231,14 +255,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     _msg = str(msg)
     xxbot.is_use_due = '使用' in _msg and '不使用' not in _msg
-    await cmd_use_due.send(Message(f"[CQ:at,qq={event.user_id}]")
-                           + Message(f"已{'允许' if xxbot.is_use_due else '禁止'}使用肚饿丹"))
+    await cmd_use_due.send(Message(f"已{'允许' if xxbot.is_use_due else '禁止'}使用肚饿丹"))
 
 
 """导入功能"""
-# 宗门任务
-Task_Level = get_config('Task_Level', _type='convert', _default=[])
-
 # 收草
 from . import shoucao
 

@@ -102,12 +102,6 @@ DrugMapping = {
     ],
 }
 
-'''
-@金魚 道友成功使用丹药：鬼面炼心丹，下一次突破的成功概率提高1.0%！
-@炎发灼眼の恶魔 道友成功使用丹药：金仙破厄丹，下一次突破的成功概率提高20.0%！
-@永乐大帝 你没有丹药
-
-'''
 command = on_command("突破丹", aliases={"突破丹", "tpd", "tpdy"}, rule=to_me(), priority=60, block=True)
 exit_command = on_command("关闭突破丹", aliases={"!突破丹", "!tpd", "!tpdy"}, rule=to_me(), priority=60, block=True)
 

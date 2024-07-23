@@ -9,7 +9,8 @@ from dateutil.relativedelta import relativedelta
 import asyncio
 
 from . import (
-    GroupIds, BotId, ManagerIds, Task_Level,
+    GroupIds, BotId, ManagerIds,
+    AtBot,
 )
 from . import (
     LoopEvent, Monitor,
@@ -22,10 +23,8 @@ from . import (
 )
 from . import xxbot
 
-AtBot = Message(f"[CQ:at,qq={BotId}] ")
-
 timing = xxbot['xsl_timing']
-monitor = Monitor(name='宗门任务监控', start=True)
+monitor = Monitor(name='悬赏令监控', start=True)
 cg_timing = xxbot['cg_timing']
 
 TaskList = [
@@ -177,6 +176,8 @@ async def _xsl_js(_cmd, _event):
     await went_await
     await went_send
 
+    if timing.check('is_exit'):
+        xsl_js_monitor('exit')
     return xsl_js_monitor
 
 
@@ -213,15 +214,19 @@ async def _xsl_jq(_cmd, _event, _task):
 
     # 处理悬赏接取
     xsl_jq_monitor('init', start=True)
-    loop = LoopEvent(_event, name='xsl_jq_loop')
 
-    went_await = loop.add(loop.loop_await_cmd('xsl js', monitor=xsl_jq_monitor))
-    went_send = loop.add(loop.loop_send_cmd('xsl js', cmd=_cmd, msg=_reply))
+    if timing.check('is_exit'):
+        xsl_jq_monitor('exit')
+    else:
+        loop = LoopEvent(_event, name='xsl_jq_loop')
 
-    await went_await
-    await went_send
+        went_await = loop.add(loop.loop_await_cmd('xsl js', monitor=xsl_jq_monitor))
+        went_send = loop.add(loop.loop_send_cmd('xsl js', cmd=_cmd, msg=_reply))
 
-    xsl_jq_monitor.set_time(_task_time)
+        await went_await
+        await went_send
+
+        xsl_jq_monitor.set_time(_task_time)
     return xsl_jq_monitor
 
 
@@ -273,10 +278,6 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         if not _monitor.check('is_done'):
             break
 
-        # 走完结算后视为完成单次流程 再此处结束
-        if timing.check('is_finish'):
-            break
-
         # 接取
         _monitor = await _xsl_jq(command, event, _task=_monitor.msg)
         if not _monitor.check('is_done'):
@@ -285,12 +286,12 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         timing.set_time(_monitor.time)
         timing('waiting', msg='悬赏令接取成功')
 
-    timing.init()
+    timing('init', msg='执行结束')
 
 
 @exit_command.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     api_update_state__by_at(event, timing, state={
-        'state': 'done',
-        'msg': '手动结束',
+        'state': 'exit',
+        'msg': '计划退出',
     })
