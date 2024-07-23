@@ -13,6 +13,7 @@ Loop_Await_Time = float(config_dict.get('Loop_Await_Time'.lower(), 1))
 StateInfo = namedtuple('StateInfo', 'name code print')
 StateInit = [
     StateInfo('error', -99, '错误'),
+    StateInfo('exit', -70, '退出'),
     StateInfo('auto', -10, '自启动'),
     StateInfo('warn', -1, '警告'),
     StateInfo('init', 0, '初始'),
@@ -107,8 +108,8 @@ class TimingBase:
             'usable': lambda self: abs(self._state) < 10,  # 未启用，仅允许启动事件通过
             'finish': lambda self: abs(self._state) > 90,  # 已完成，不在接受任何事件，等待重新启用
             'break': lambda self: abs(self._state) >= 80,  # 用于监听中打断监听状态
-            'normal': lambda self: 10 <= self._state <= 80,  # 正常运行中，允许事件监听
-            'mutual': lambda self: 10 <= self._state < 80,  # 正常运行中，允许事件监听与交互
+            'normal': lambda self: 10 <= abs(self._state) <= 80,  # 正常运行中，允许事件监听
+            'mutual': lambda self: 10 <= abs(self._state) < 80,  # 正常运行中，允许事件监听与交互
         }
 
     """状态控制"""
