@@ -3,6 +3,7 @@ __author__ = "Sena"
 __version__ = "1.0.1"
 
 import nonebot
+from nonebot import get_bot, require
 from nonebot.rule import to_me
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
