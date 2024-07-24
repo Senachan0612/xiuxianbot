@@ -39,11 +39,8 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not timing.check('is_usable'):
         return
 
-    uid = event.user_id
-    AtUser = Message(f"[CQ:at,qq={uid}] ")
-
     timing('start', msg='正在复读')
-    await command_manual.send(AtUser + Message('复读模式已启动！开始复读任意 (空格)结尾命令'))
+    await command_manual.send(Message('复读模式已启动！开始复读任意 (空格)结尾命令'))
 
     """监听"""
     while True:
@@ -53,7 +50,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         await asyncio.sleep(5)
 
     timing('init')
-    await command_manual.send(AtUser + Message('复读模式关闭！'))
+    await command_manual.send(Message('复读模式关闭！'))
 
 
 AtBot = Message(f"[CQ:at,qq={BotId}] ")
