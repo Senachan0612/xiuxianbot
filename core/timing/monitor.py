@@ -1,11 +1,13 @@
+"""监听器"""
+
 import asyncio
 import datetime
 from dateutil.relativedelta import relativedelta
 
-from . import TimingBase
+from . import Timing
 
 
-class Monitor(TimingBase):
+class Monitor(Timing):
     # 等待时间
     time = False
     # 命令更新时间
@@ -32,7 +34,7 @@ class Monitor(TimingBase):
         """格式化日期"""
         if not dt:
             return '/'
-        return dt.strftime('%Y-%m-%d %H:%M:%S')
+        return dt.strftime('%m-%d %H:%M')
 
     def log(self):
         return (

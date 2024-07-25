@@ -2,52 +2,82 @@
 
 import re
 import os
-import sys
+import json
 
 import nonebot
 
 # from . import DataPath
-DataPath = 'D:/__env__/bot/autoxx-bot/autoxx_bot/plugins/xiuxianbot/data'
+DataPath = r'D:\__env__\bot\lln2-bot\lln2_bot\plugins\xiuxianbot\data'
+# 配置前缀
+ConfigPrefix = 'XiuXian'
 
 
-class Config:
-    # bot配置字典
-    _config_dict = nonebot.get_driver().config.dict()
+class XiuXianConfig:
     # 配置前缀
-    _prefix = 'XiuXian__'.lower()
+    _prefix = ConfigPrefix.lower()
+    # bot配置字典
+    _xiuxian_config = nonebot.get_driver().config.dict().get(_prefix, {})
     # 注释
     _pattern = r'<\*.*?\*>'
     # 路径
-    _path = r'%s%s' % (DataPath, 'Config.json')
+    _path_dir = DataPath
+    _path_file = r'%s\%s' % (DataPath, 'Config.json')
 
-    def __int__(self):
-        self.config_dict = self.load_config()
+    def __init__(self):
+        # 配置字典
+        self.config_dict = {}
 
-    def load_config(self):
+        # 加载配置
+        self.load()
+
+    def __getitem__(self, item, default=None):
+        if isinstance(item, tuple):
+            item, default, *_ = *item, None, None
+        return self.config_dict.get(item.lower(), default)
+
+    def load(self):
         """加载xxbot配置"""
-        if os.path.isfile(self._path):
-            ...
+        # 读取用户配置
+        config_dict = self.get_user_config()
 
-        return dict(self._load_config())
+        if config_dict and isinstance(config_dict, dict):
+            self.config_dict = config_dict
+        else:
+            # 读取bot配置
+            config_dict = dict(self.get_bot_config())
+            self.config_dict = config_dict
+            # 生成用户配置
+            self.set_user_config()
+        return config_dict
 
-    def _load_bot_config(self):
+    def get_bot_config(self):
         """加载bot配置"""
-        for key, val in self._config_dict.items():
-            if not str(key).startswith(self._prefix):
-                continue
-
-            try:
-                val = re.sub(self._pattern, '', val)
-                val = eval(val)
-            except Exception:
-                val = None
-
+        for key, val in self._xiuxian_config.items():
+            if isinstance(val, str):
+                try:
+                    val = re.sub(self._pattern, '', val)
+                    val = eval(val)
+                except Exception:
+                    val = None
             yield key, val
 
-    def _load_user_config(self):
+    def get_user_config(self):
         """加载用户配置"""
+        if os.path.isfile(self._path_file):
+            # 加载用户配置
+            try:
+                with open(self._path_file, mode='r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception:
+                pass
 
-    def __getitem__(self, item):
-        if isinstance(item, str):
-            item = item.lower()
-        return self.config_dict.get(item, None)
+    def set_user_config(self):
+        """更新用户配置"""
+        try:
+            if not os.path.isdir(self._path_dir):
+                os.makedirs(self._path_dir)
+
+            with open(self._path_file, mode='w', encoding='utf-8') as f:
+                json.dump(self.config_dict, f, indent=4)
+        except Exception:
+            pass

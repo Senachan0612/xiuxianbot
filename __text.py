@@ -1,4 +1,5 @@
 import re
+import os
 
 # import datetime
 # from dateutil.relativedelta import relativedelta
@@ -43,12 +44,12 @@ import re
 # for match in matches:
 #     print(match[0], match[1])
 
-    # if match[0] == '114' and match[1]:
-    #     print(match[0], match[1])
-    # elif match[0] == '114' and not match[1]:
-    #     print(match[0])
-    # elif match[0] == '72' and match[1]:
-    #     print(match[0], match[1])
+# if match[0] == '114' and match[1]:
+#     print(match[0], match[1])
+# elif match[0] == '114' and not match[1]:
+#     print(match[0])
+# elif match[0] == '72' and match[1]:
+#     print(match[0], match[1])
 
 # TaskList = [
 #     # 九品 性平
@@ -99,10 +100,26 @@ import re
 #
 # )
 
+#
+# d = {
+#     1: 11,
+#     2: 22,
+# }
+#
+# print(min(d))
 
-d = {
-    1: 11,
-    2: 22,
-}
+# print(os.path.isfile('D:/__env__/bot/autoxx-bot/autoxx_bot/plugins/xiuxianbot/data\\Config.json'))
 
-print(min(d))
+from itertools import chain
+
+
+class X:
+    def __getitem__(self, item, default=None):
+        if isinstance(item, tuple):
+            item, default, *_ = *item, None, None
+
+        return 1
+
+
+x = X()
+x[1, 1]
