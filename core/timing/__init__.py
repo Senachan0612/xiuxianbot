@@ -73,7 +73,7 @@ class Timing:
         # 容器描述
         su.__setattr__('name', name or getattr(self, 'name', False))
         # 暂停状态
-        su.__setattr__('_pause_state', 80)
+        su.__setattr__('_pause_state', 70)
         # 状态
         self._set_state(name='init', func=False)
 
@@ -142,7 +142,7 @@ class Timing:
     def _set_state__pause(self, value='pause', **kwargs):
         """设置状态 - 暂停"""
         _state = self._state
-        if (value == 'pause' and _state != 80) or (value == 'unpause' and _state == 80):
+        if (value == 'pause' and _state != 70) or (value == 'unpause' and _state == 70):
             self._set_state(code=self._pause_state, func=False)
             self._pause_state, _state = _state, self._pause_state
 

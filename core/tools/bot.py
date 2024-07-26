@@ -4,7 +4,9 @@ __all__ = [
     'xxBot',
 ]
 
+import datetime
 from collections import namedtuple
+from dateutil.relativedelta import relativedelta
 
 import nonebot
 from nonebot.adapters.onebot.v11 import Message
@@ -211,6 +213,17 @@ class XiuXianBot:
     def check_is_xxbot(self, _id):
         """检查 是否为bot"""
         return _id == self.xxBotId
+
+    """特殊工具"""
+
+    def get_regular_time(self, name, default, days=0):
+        """获取定时"""
+        hour, minute = self[name, default]
+        now_dt = datetime.datetime.now()
+
+        next_dt = now_dt.replace(hour=hour, minute=minute, second=0, microsecond=0) + relativedelta(days=days)
+        time = (next_dt - now_dt).total_seconds()
+        return now_dt, next_dt, time
 
 
 xxBot = XiuXianBot()

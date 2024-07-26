@@ -60,5 +60,12 @@ class Monitor(Timing):
         self.set_time()
         return time
 
+    def get_remaining_time(self):
+        """获取距离下次执行剩余时间"""
+        if not self.exec_time:
+            return -1
+
+        return (self.exec_time - datetime.datetime.now()).total_seconds()
+
     async def sleep(self):
         await asyncio.sleep(self.time)

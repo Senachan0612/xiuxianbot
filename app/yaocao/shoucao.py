@@ -16,7 +16,7 @@ from . import (
 """收草"""
 
 # 注册监控器
-timing = Monitor(name='收草', time=xxBot['Default_Interval_ShouCao', 24 * 60 * 60])
+timing = Monitor(name='收草', time=xxBot['CD_ShouCao', 24 * 60 * 60])
 _command = ('收草', 'sc')
 command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
 _exit_command = ('关闭收草', '!收草', '!sc')
