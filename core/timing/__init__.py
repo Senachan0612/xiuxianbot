@@ -25,7 +25,7 @@ StateInit = [
 
     # 执行结束 70 ~ 90 监听结束，期间无法关闭
     StateInfo('skip', 60, '跳过'),
-    StateInfo('regular', -60, '计时'),
+    StateInfo('regular', -60, '定时'),
     StateInfo('pause', 70, '暂停'),
     StateInfo('exit', 80, '退出'),
 

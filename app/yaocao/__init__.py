@@ -4,11 +4,9 @@ from .. import (
     DataPath,
     Config,
     Monitor, LoopEvent,
-)
 
-from .. import (
-    xxbot,
-    check,
+    xxBot,  # 加载xxbot
+    eventCheck,  # 加载事件校验工具包
 )
 
 from . import shoucao

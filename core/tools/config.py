@@ -50,6 +50,20 @@ class XiuXianConfig:
             self.set_user_config()
         return config_dict
 
+    def update(self, configs: dict, write=True):
+        """更新配置"""
+
+        def _f():
+            for k, v in configs.items():
+                if isinstance(k, str):
+                    k = k.lower()
+                yield k, v
+
+        self.config_dict.update(dict(_f()))
+
+        if write:
+            self.set_user_config()
+
     def get_bot_config(self):
         """加载bot配置"""
         for key, val in self._xiuxian_config.items():
@@ -78,6 +92,9 @@ class XiuXianConfig:
                 os.makedirs(self._path_dir)
 
             with open(self._path_file, mode='w', encoding='utf-8') as f:
-                json.dump(self.config_dict, f, indent=4)
+                json.dump(self.config_dict, f, ensure_ascii=False, indent=2)
         except Exception:
             pass
+
+
+Config = XiuXianConfig()

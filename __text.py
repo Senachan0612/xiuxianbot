@@ -112,14 +112,28 @@ import os
 
 from itertools import chain
 
+#
+# class X:
+#     def __getitem__(self, item, default=None):
+#         if isinstance(item, tuple):
+#             item, default, *_ = *item, None, None
+#
+#         return 1
+#
+#
+# x = X()
+# x[1, 1]
 
-class X:
-    def __getitem__(self, item, default=None):
-        if isinstance(item, tuple):
-            item, default, *_ = *item, None, None
+text = '''
+    "设置授权 11111",
+    "设置授权 11111",
+    "设置授权 11111 , 2222 adsa"
+    
+    精确到设置授权之后的数字
+'''
 
-        return 1
+pattern = re.compile(r'\d+')
+pattern.findall(text)
 
+print(1)
 
-x = X()
-x[1, 1]

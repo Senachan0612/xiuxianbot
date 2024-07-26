@@ -41,7 +41,6 @@ class Monitor(Timing):
             self.name,
             self.state.print,
             self.msg or '/',
-            self.dt_string(self.exec_time),
         )
 
     def set_time(self, time=False):

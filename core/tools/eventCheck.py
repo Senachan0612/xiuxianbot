@@ -1,6 +1,6 @@
 """相关校验"""
 
-from . import xxbot
+from . import xxBot
 
 
 def api_check__is_at(event, *, msg=False, uid=False):
@@ -21,19 +21,19 @@ def api_check__event(event, *, bot_event=False, at_me=True, super_event=False):
     """校验事件"""
     if at_me and not api_check__is_at(event):
         return
-    if not xxbot.check_is_gid(event.group_id):
+    if not xxBot.check_is_gid(event.group_id):
         return
 
-    if bot_event and xxbot.check_is_xxbot(event.user_id):
+    if bot_event and xxBot.check_is_xxbot(event.user_id):
         return True
-    elif not bot_event and super_event and xxbot.check_is_suid(event.user_id):
+    elif not bot_event and super_event and xxBot.check_is_suid(event.user_id):
         return True
-    elif not bot_event and not super_event and xxbot.check_is_uid(event.user_id):
+    elif not bot_event and not super_event and xxBot.check_is_uid(event.user_id):
         return True
 
 
 def api_check__xxbot_event(event):
-    """校验 xxbot at事件"""
+    """校验 xxBot at事件"""
     return api_check__event(event, bot_event=True, at_me=True)
 
 
@@ -73,7 +73,7 @@ def api_monitor_check_and_control__update_state_by_user(event, timing, state):
 
 
 def api_monitor_check_and_control__update_state_by_xxbot(event, timing, state):
-    """监听校验并控制 xxbot 修改监听器状态"""
+    """监听校验并控制 xxBot 修改监听器状态"""
     if not api_check__xxbot_event(event):
         return
 

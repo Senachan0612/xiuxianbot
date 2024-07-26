@@ -25,9 +25,15 @@ from .core import (
     Config,  # xxbot配置
     Monitor,  # 事件循环器
     LoopEvent,  # 监听器
+    xxBot,  # 加载xxbot
+    eventCheck,  # 加载事件校验工具包
 )
 
-from .app import *
+# 加载应用功能
+from . import app
+
+# 加载管理功能
+from . import control
 
 # """常用工具"""
 #
