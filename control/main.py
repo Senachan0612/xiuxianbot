@@ -22,14 +22,14 @@ on_bot_connect = nonebot.get_driver().on_bot_connect
 admin_event = eventCheck.api_check__app_event
 
 
-def super_admin_event(_event, _cmd=False):
+async def super_admin_event(_event, _cmd=False):
     """超管校验"""
     if eventCheck.api_check__app_super_event(_event):
         return True
 
     if _cmd:
         at_user = Message(f"[CQ:at,qq={_event.user_id}] ")
-        asyncio.run(_cmd.finish(at_user + Message('功能仅允许超管执行！')))
+        await _cmd.finish(at_user + Message('功能仅允许超管执行！'))
 
 
 """应用自启动"""
@@ -107,7 +107,7 @@ cmd_set_config__security = on_command('', rule=startswith(msg=('设置授权', '
 
 @cmd_set_config__security.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
-    if not super_admin_event(event, cmd_set_config__security):
+    if not await super_admin_event(event, cmd_set_config__security):
         return
 
     at_user = Message(f"[CQ:at,qq={event.user_id}] ")
@@ -146,12 +146,12 @@ cmd_set_config__save = on_command(
 
 @cmd_set_config__save.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
-    if not super_admin_event(event, cmd_set_config__save):
+    if not await super_admin_event(event, cmd_set_config__save):
         return
 
     at_user = Message(f"[CQ:at,qq={event.user_id}] ")
     xxBot.save_configs()
 
-    await cmd_set_config__security.finish(
+    await cmd_set_config__save.finish(
         at_user + Message(f'执行成功，配置已同步！')
     )
