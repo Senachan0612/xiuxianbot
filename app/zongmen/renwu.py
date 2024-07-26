@@ -105,7 +105,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
             timing('regular', msg=timing.dt_string(timing.exec_time))
             continue
 
-    timing('init', msg='自动结束')
+    timing('init')
 
 
 @exit_command.handle()
