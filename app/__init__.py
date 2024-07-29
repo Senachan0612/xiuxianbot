@@ -14,6 +14,7 @@ from . import yaocao
 from . import zongmen
 from . import diaoxiang
 from . import tupo
+from . import xiuxian
 
 # xxBot同步配置
 xxBot.save_configs()
