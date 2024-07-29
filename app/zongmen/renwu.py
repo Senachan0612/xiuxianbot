@@ -141,7 +141,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if eventCheck.api_monitor_check__active_app__xxbot_event(event, timing, monitor):
         return
 
-    task_level = xxBot['ZongMen_Task_Level', [1, 2, 3]]
+    task_level = xxBot['xxBot_Config_ZongMen_Task_Level', [1, 2, 3]]
     task_list = (_task for _level, _tasks in TaskList.items() if _level in task_level for _task in _tasks)
     cmd_msg = str(msg)
 

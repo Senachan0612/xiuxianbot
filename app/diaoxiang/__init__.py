@@ -1,4 +1,4 @@
-"""功能"""
+"""雕像相关"""
 
 from .. import (
     DataPath,
@@ -9,10 +9,4 @@ from .. import (
     eventCheck,  # 加载事件校验工具包
 )
 
-# 加载功能
-from . import yaocao
-from . import zongmen
-from . import diaoxiang
-
-# xxBot同步配置
-xxBot.save_configs()
+from . import koubai

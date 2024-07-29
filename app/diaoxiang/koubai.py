@@ -1,9 +1,6 @@
-"""宗门丹药功能"""
+"""叩拜雕像功能"""
 
 import re
-import asyncio
-import datetime
-from collections import namedtuple
 
 from nonebot.plugin.on import on_command, on_shell_command, on_regex
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
@@ -16,26 +13,27 @@ from . import (
     eventCheck,
 )
 
-"""宗门丹药"""
+"""雕像"""
 
 # 注册监控器
-timing = Monitor(name='宗门丹药')
-_command = ('宗门丹药', 'zmdy')
-command = on_command('宗门丹药', aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭宗门丹药', '!宗门丹药', '!zmdy')
-exit_command = on_command('关闭宗门丹药', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+timing = Monitor(name='叩拜雕像')
+
+_command = ('叩拜雕像', 'kbdx')
+command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
+_exit_command = ('关闭叩拜雕像', '!叩拜雕像', '!kbdx')
+exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
 # 添加自启动
 xxBot.load_apps({
-    '宗门丹药': {
+    '叩拜雕像': {
         'timing': timing,
         'cmd': command,
         'auto': True,
     },
 })
 
-monitor = Monitor(name='宗门丹药监控')
-Message__lq = xxBot.msg__at_xxbot + Message('宗门丹药领取')
+monitor = Monitor(name='叩拜雕像监控')
+Message__kbdx = xxBot.msg__at_xxbot + Message('叩拜雕像')
 
 
 @command.handle()
@@ -48,7 +46,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     # 校验执行时间
-    _, _, time = xxBot.get_regular_time('Regular_ZongMenDanYao', default=[23, 30], days=0)
+    _, _, time = xxBot.get_regular_time('Regular_KouBaiDiaoXiang', default=[23, 30], days=0)
     if time > 0:
         timing.set_time(time)
         timing('regular', msg=timing.dt_string(timing.exec_time))
@@ -65,7 +63,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
             await timing.sleep()
 
         went_await = loop.add(loop.loop_await_cmd('dy lq', monitor=monitor))
-        went_send = loop.add(loop.loop_send_cmd('dy lq', cmd=command, msg=Message__lq))
+        went_send = loop.add(loop.loop_send_cmd('dy lq', cmd=command, msg=Message__kbdx))
 
         # 执行监听
         timing('running')
@@ -88,18 +86,18 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     })
 
 
-"""宗门丹药领取"""
+"""雕像叩拜"""
 
-task_finish_pattern = r'(道友成功领取到丹药|道友已经领取过了，不要贪心哦)'
-command_zmdy_lq_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP)
+task_finish_pattern = r'(神秘的环奈显灵了|道友今天已经叩拜过了)'
+command_dx_kb_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP)
 
 
-@command_zmdy_lq_ture.handle()
+@command_dx_kb_ture.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if eventCheck.api_monitor_check__active_app__xxbot_event(event, timing, monitor):
         return
 
-    _, _, time = xxBot.get_regular_time('Regular_ZongMenDanYao', default=[23, 30], days=1)
+    _, _, time = xxBot.get_regular_time('Regular_KouBaiDiaoXiang', default=[23, 30], days=1)
 
     monitor('regular')
     monitor.set_time(time)
