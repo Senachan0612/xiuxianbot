@@ -28,16 +28,6 @@ class XiuXianBot:
         'is_use_due': False,  # 使用肚饿丹
     }
 
-    @property
-    def bot(self):
-        """bot"""
-        return nonebot.get_bot()
-
-    @property
-    def BotId(self):
-        """bot"""
-        return self.bot.self_id
-
     def __init__(self):
         self.load_configs()
 
@@ -55,20 +45,10 @@ class XiuXianBot:
         return self.apps[item]
 
     def __getitem__(self, item):
+        """获取配置"""
         return self._config[item]
 
-    def load_configs(self):
-        """初始化配置"""
-        if not self['xxbot_config_is_up_to_date']:
-            self.update_configs({
-                # 自启动应用
-                'xxbot_config_auto_apps': self.auto_apps,
-                # 配置信息
-                'xxbot_config_configs': self.config_dict,
-            })
-        else:
-            self.auto_apps = self['xxbot_config_auto_apps']
-            self.config_dict = self['xxbot_config_configs']
+    """配置 应用相关"""
 
     def load_apps(self, data: dict):
         """初始化应用"""
@@ -114,6 +94,21 @@ class XiuXianBot:
         #     # 'zmdy_timing': Monitor(name='宗门丹药', time=24 * 60 * 60),
         # }
 
+    """配置 设置相关"""
+
+    def load_configs(self):
+        """初始化配置"""
+        if not self['xxbot_config_is_up_to_date']:
+            self.update_configs({
+                # 自启动应用
+                'xxbot_config_auto_apps': self.auto_apps,
+                # 配置信息
+                'xxbot_config_configs': self.config_dict,
+            })
+        else:
+            self.auto_apps = self['xxbot_config_auto_apps']
+            self.config_dict = self['xxbot_config_configs']
+
     def update_configs(self, configs):
         """更新配置"""
         self._config.update(configs, write=configs.get('xxbot_config_is_up_to_date'))
@@ -124,10 +119,69 @@ class XiuXianBot:
             'xxbot_config_is_up_to_date': True,
         })
 
+    def set_security(self, operate, tag, nums):
+        """设置授权"""
+        if tag == '超管':
+            name, security = 'Super_Manager_Ids', self.SuperManagerIds
+        elif tag == '用户':
+            name, security = 'Manager_Ids', self.ManagerIds
+        elif tag == '群组':
+            name, security = 'Group_Ids', self.GroupIds
+        else:
+            return
+
+        if operate == '设置授权':
+            security.extend(set(nums) - set(security))
+        elif operate == '取消授权':
+            nums_index = (security.index(num) for num in (set(security) & set(nums)))
+            for index in sorted(nums_index, reverse=True):
+                security.pop(index)
+        else:
+            return
+
+        self.update_configs({
+            # 自启动应用
+            name: security,
+        })
+        return security
+
+    """配置 读取相关"""
+
+    @property
+    def bot(self):
+        """Bot"""
+        return nonebot.get_bot()
+
+    @property
+    def BotId(self):
+        """Bot ID"""
+        return self.bot.self_id
+
     def get_timing(self, name):
         """获取应用监控器"""
         app = self(name)
         return app['timing']
+
+    def get_regular_time(self, name, default, days=0):
+        """获取定时"""
+        hour, minute = self[name, default]
+        now_dt = datetime.datetime.now()
+
+        next_dt = now_dt.replace(hour=hour, minute=minute, second=0, microsecond=0) + relativedelta(days=days)
+        time = (next_dt - now_dt).total_seconds()
+        return now_dt, next_dt, time
+
+    """配置信息 相关"""
+
+    def set_config(self, name, default=False):
+        """设置配置信息"""
+        self['xxbot_config_configs'][name] = default
+
+    def get_config(self, name, default=False):
+        """获取配置信息"""
+        return self['xxbot_config_configs'].get(name, default)
+
+    """日志相关"""
 
     def status(self):
         """打印状态"""
@@ -158,32 +212,6 @@ class XiuXianBot:
     def _right(text):
         return '{: <10}'.format(text)
 
-    def set_security(self, operate, tag, nums):
-        """设置授权"""
-        if tag == '超管':
-            name, security = 'Super_Manager_Ids', self.SuperManagerIds
-        elif tag == '用户':
-            name, security = 'Manager_Ids', self.ManagerIds
-        elif tag == '群组':
-            name, security = 'Group_Ids', self.GroupIds
-        else:
-            return
-
-        if operate == '设置授权':
-            security.extend(set(nums) - set(security))
-        elif operate == '取消授权':
-            nums_index = (security.index(num) for num in (set(security) & set(nums)))
-            for index in sorted(nums_index, reverse=True):
-                security.pop(index)
-        else:
-            return
-
-        self.update_configs({
-            # 自启动应用
-            name: security,
-        })
-        return security
-
     """通用回复模板"""
 
     @property
@@ -213,17 +241,6 @@ class XiuXianBot:
     def check_is_xxbot(self, _id):
         """检查 是否为bot"""
         return _id == self.xxBotId
-
-    """特殊工具"""
-
-    def get_regular_time(self, name, default, days=0):
-        """获取定时"""
-        hour, minute = self[name, default]
-        now_dt = datetime.datetime.now()
-
-        next_dt = now_dt.replace(hour=hour, minute=minute, second=0, microsecond=0) + relativedelta(days=days)
-        time = (next_dt - now_dt).total_seconds()
-        return now_dt, next_dt, time
 
 
 xxBot = XiuXianBot()

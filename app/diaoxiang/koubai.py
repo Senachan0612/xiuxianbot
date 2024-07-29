@@ -23,7 +23,7 @@ command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), 
 _exit_command = ('关闭叩拜雕像', '!叩拜雕像', '!kbdx')
 exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
-# 添加自启动
+# 注册应用
 xxBot.load_apps({
     '叩拜雕像': {
         'timing': timing,

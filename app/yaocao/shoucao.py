@@ -16,13 +16,13 @@ from . import (
 """收草"""
 
 # 注册监控器
-timing = Monitor(name='收草', time=xxBot['CD_ShouCao', 24 * 60 * 60])
+timing = Monitor(name='收草')
 _command = ('收草', 'sc')
 command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
 _exit_command = ('关闭收草', '!收草', '!sc')
 exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
-# 添加自启动
+# 注册应用
 xxBot.load_apps({
     '收草': {
         'timing': timing,
@@ -95,7 +95,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if eventCheck.api_monitor_check__active_app__xxbot_event(event, timing, monitor):
         return
 
-    monitor.set_time(timing.default_time)
+    monitor.set_time(xxBot['CD_ShouCao', 24 * 60 * 60])
     monitor('done')
 
 

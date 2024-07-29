@@ -25,7 +25,7 @@ command = on_command('宗门丹药', aliases=set(_command), rule=fullmatch(_comm
 _exit_command = ('关闭宗门丹药', '!宗门丹药', '!zmdy')
 exit_command = on_command('关闭宗门丹药', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
-# 添加自启动
+# 注册应用
 xxBot.load_apps({
     '宗门丹药': {
         'timing': timing,

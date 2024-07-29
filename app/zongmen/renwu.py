@@ -49,7 +49,7 @@ command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), 
 _exit_command = ('关闭宗门任务', '!宗门任务', '!zmrw')
 exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
-# 添加自启动
+# 注册应用
 xxBot.load_apps({
     '宗门任务': {
         'timing': timing,
@@ -118,7 +118,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 """宗门任务接取"""
 
-command_jq_false = on_command("", rule=keyword('道友已接取3次，今日无法再获取宗门任务了'), priority=100, block=True)
+command_jq_false = on_command('', rule=keyword('道友已接取3次，今日无法再获取宗门任务了'), priority=100, block=True)
 # 任务内容
 task_pattern = r'(%s)' % '|'.join(re.escape(_task.content) for _, _tasks in TaskList.items() for _task in _tasks)
 command_jq_ture = on_regex(pattern=task_pattern, flags=re.I, permission=GROUP)
@@ -185,11 +185,11 @@ task_wc_monitor = Monitor(name='宗门任务完成')
 task_wc_pattern = r'(道友为了完成任务购买宝物消耗灵石|道友大战一番，气血减少)'
 command_wc_ture = on_regex(pattern=task_wc_pattern, flags=re.I, permission=GROUP)
 
-command_wc_false_no_hp = on_command("", rule=keyword('重伤未愈，动弹不得'), priority=100, block=True)
-command_wc_false_no_money = on_command("", rule=keyword('道友的灵石不足以完成宗门任务'), priority=100, block=True)
+command_wc_false_no_hp = on_command('', rule=keyword('重伤未愈，动弹不得'), priority=100, block=True)
+command_wc_false_no_money = on_command('', rule=keyword('道友的灵石不足以完成宗门任务'), priority=100, block=True)
 
-command_wc_false_no_task = on_command("", aliases={""}, rule=keyword('道友目前还没有宗门任务'), priority=100, block=True)
-command_wc_false_no_time = on_command("", aliases={""}, rule=keyword('剩余CD'), priority=100, block=True)
+command_wc_false_no_task = on_command('', rule=keyword('道友目前还没有宗门任务'), priority=100, block=True)
+command_wc_false_no_time = on_command('', rule=keyword('剩余CD'), priority=100, block=True)
 
 
 @command_wc_ture.handle()
