@@ -40,37 +40,36 @@ async def auto_exec_command():
     """功能自启"""
     bot = xxBot.bot
 
-    auto_events = []
-    for name, (_, matcher, _, msg, at_bot) in xxBot.apps.items():
-        if not xxBot.auto_apps.get(name):
-            continue
+    def _func():
+        for name, (_, matcher, _, msg, at_bot) in xxBot.apps.items():
+            if not xxBot.auto_apps.get(name):
+                continue
 
-        event = GroupMessageEvent(
-            time=0,
-            self_id=bot.self_id,
-            post_type="message",
-            sub_type="normal",
-            user_id=xxBot.SuperManagerIds[0],
-            group_id=xxBot.GroupIds[0],
-            message_type="group",
-            message_id=-1,
-            message=msg,
-            raw_message=str(msg),
-            font=0,
-            sender={},
-            to_me=bool(at_bot)
-        )
+            event = GroupMessageEvent(
+                time=0,
+                self_id=bot.self_id,
+                post_type="message",
+                sub_type="normal",
+                user_id=xxBot.SuperManagerIds[0],
+                group_id=xxBot.GroupIds[0],
+                message_type="group",
+                message_id=-1,
+                message=msg,
+                raw_message=str(msg),
+                font=0,
+                sender={},
+                to_me=bool(at_bot)
+            )
 
-        auto_events.append(matcher().run(
-            bot=bot,
-            event=event,
-            state={'_prefix': TrieRule.get_value(bot, event, {}), },
-            stack=None,
-            dependency_cache=None,
-        ))
+            yield matcher().run(
+                bot=bot,
+                event=event,
+                state={'_prefix': TrieRule.get_value(bot, event, {}), },
+                stack=None,
+                dependency_cache=None,
+            )
 
-    for event in auto_events:
-        await event
+    await asyncio.gather(*_func())
 
 
 """查看xxbot信息"""

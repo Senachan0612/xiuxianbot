@@ -123,17 +123,52 @@ from itertools import chain
 #
 # x = X()
 # x[1, 1]
+#
+# text = '''
+#     "设置授权 11111",
+#     "设置授权 11111",
+#     "设置授权 11111 , 2222 adsa"
+#
+#     精确到设置授权之后的数字
+# '''
+#
+# pattern = re.compile(r'\d+')
+# pattern.findall(text)
+#
+# print(1)
 
-text = '''
-    "设置授权 11111",
-    "设置授权 11111",
-    "设置授权 11111 , 2222 adsa"
-    
-    精确到设置授权之后的数字
-'''
+import asyncio
 
-pattern = re.compile(r'\d+')
-pattern.findall(text)
 
-print(1)
+async def func1():
+    await asyncio.sleep(1)
+    print("func1 completed")
+    return 1
+
+
+async def func2():
+    await asyncio.sleep(2)
+    print("func2 completed")
+    return 2
+
+
+async def func3():
+    await asyncio.sleep(3)
+    print("func3 completed")
+    return 3
+
+
+async def main():
+    # 将要并发运行的异步函数存储在列表中
+    func_list = [func1, func2, func3]
+
+    # 使用 asyncio.gather 并发运行所有异步函数
+    results = await asyncio.gather(*[func() for func in func_list])
+
+    print("All functions completed")
+    print("Results:", results)
+
+
+# 运行主函数
+asyncio.run(main())
 
