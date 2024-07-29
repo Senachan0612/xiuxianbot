@@ -26,7 +26,11 @@ class XiuXianBot:
     # 配置信息
     config_dict = {
         'is_use_due': False,  # 使用肚饿丹
+        'is_auto_use_due': False,  # 自动使用肚饿丹
+        'auto_use_due_level': '渡劫境圆满',  # 肚饿丹自动服用境界
     }
+    # 日志信息
+    infos = {}
 
     def __init__(self):
         self.load_configs()
@@ -39,6 +43,9 @@ class XiuXianBot:
         self.ManagerIds = list(set(self.SuperManagerIds + self['Manager_Ids', []]))
         # 修仙botID
         self.xxBotId = self['Bot_Id']
+
+        # 加载应用日志
+        self.load_info('app', self.app_config_info())
 
     def __call__(self, item):
         """获取应用"""
@@ -183,33 +190,45 @@ class XiuXianBot:
 
     """日志相关"""
 
-    def status(self):
-        """打印状态"""
+    def load_info(self, name, func):
+        """加载日志"""
+        self.infos[name] = func
+
+    def get_info(self, name):
+        """读取日志"""
+        func = self.infos.get(name)
+        return func() if callable(func) else ('', '')
+
+    def print_info(self, name, func=False):
+        """输出日志"""
+        title, infos = func() if callable(func) else self.get_info(name)
         return (
-                Message('####指令\n') + self.cmd_status()
-                + Message('\n\n####状态\n') + self.bot_status()
+                Message(f'>>>{title}\n')
+                + Message('\n'.join(''.join(self.set_format(m) for m in info) for info in infos))
         )
 
-    def bot_status(self):
-        """bot状态"""
-        msg_list = [
-            ('肚饿丹', '允许' if self['is_use_due'] else '禁止'),
-        ]
-        msg_str = Message('\n'.join(''.join(self._right(m) for m in info) for info in msg_list))
-        return msg_str
+    def status(self):
+        """打印状态"""
+        msg = Message()
+        for name, func in self.infos.items():
+            if msg:
+                msg += Message('\n\n')
+            msg += self.print_info(name, func)
+        return msg
 
-    def cmd_status(self):
-        """命令状态"""
+    def app_config_info(self):
+        """应用相关信息"""
 
-        msg_list = [
-            ['指令', '状态', '', ],
-            *[app.timing.log() for _, app in self.apps.items()]
-        ]
-        msg_str = Message('\n'.join(''.join(self._right(m) for m in info) for info in msg_list))
-        return msg_str
+        def _func():
+            return '功能清单', [
+                ['指令', '状态', '', ],
+                *[app.timing.log() for _, app in self.apps.items()]
+            ]
+
+        return _func
 
     @staticmethod
-    def _right(text):
+    def set_format(text):
         return '{: <10}'.format(text)
 
     """通用回复模板"""

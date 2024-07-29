@@ -19,9 +19,9 @@ from . import (
 timing = Monitor(name='叩拜雕像')
 
 _command = ('叩拜雕像', 'kbdx')
-command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
+command = on_command('叩拜雕像', aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
 _exit_command = ('关闭叩拜雕像', '!叩拜雕像', '!kbdx')
-exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+exit_command = on_command('关闭叩拜雕像', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({

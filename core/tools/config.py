@@ -6,8 +6,7 @@ import json
 
 import nonebot
 
-# from . import DataPath
-DataPath = r'D:\__env__\bot\lln2-bot\lln2_bot\plugins\xiuxianbot\data'
+from . import DataPath
 # 配置前缀
 ConfigPrefix = 'XiuXian'
 

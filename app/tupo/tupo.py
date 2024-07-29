@@ -57,7 +57,11 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         timing('running', msg='正在突破')
         monitor('init')
 
-        send_msg = Message__tp_sy if xxBot.get_config('is_use_due') else Message__tp
+        if xxBot.get_config('is_use_due') and xxBot.get_config('is_auto_use_due'):
+            send_msg = Message__tp_sy
+        else:
+            send_msg = Message__tp
+
         went_await = loop.add(loop.loop_await_cmd('tupo', monitor=monitor))
         went_send = loop.add(loop.loop_send_cmd('tupo', cmd=command, msg=send_msg))
 
@@ -77,8 +81,8 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
             continue
 
         # 执行等待
-        timing('regular', msg='突破CD')
         timing.set_time(monitor.time)
+        timing('regular', msg=timing.dt_string(timing.exec_time))
         await timing.sleep()
 
     timing('init')

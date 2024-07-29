@@ -1,5 +1,7 @@
 """宗门任务功能"""
 
+import os
+import json
 import re
 import asyncio
 import datetime
@@ -11,6 +13,7 @@ from nonebot.params import CommandArg
 from nonebot.rule import to_me, keyword, fullmatch
 
 from . import (
+    DataPath,
     Monitor, LoopEvent,
     xxBot,
     eventCheck,
@@ -18,9 +21,11 @@ from . import (
 
 """宗门任务"""
 
+# 加载配置
+File_Path = r'%s\%s' % (DataPath, 'ZongMenRenWu.json')
 Task = namedtuple('Task', 'content money')
-# 任务清单
-TaskList = {
+# 宗门任务清单
+DefaultTaskList = {
     # 2% 挑战
     1: [
         Task('最近有宗外势力抹黑宗门', 0),  # 为了宗主
@@ -42,12 +47,27 @@ TaskList = {
     ],
 }
 
+try:
+    if os.path.isfile(File_Path):
+        # 加载用户配置
+        with open(File_Path, mode='r', encoding='utf-8') as f:
+            TaskList = {int(_key): [Task(*_v) for _v in _val] for _key, _val in json.load(f).items()}
+    else:
+        if not os.path.isdir(DataPath):
+            os.makedirs(DataPath)
+
+        with open(File_Path, mode='w', encoding='utf-8') as f:
+            json.dump(DefaultTaskList, f, ensure_ascii=False, indent=2)
+        TaskList = DefaultTaskList
+except Exception:
+    TaskList = DefaultTaskList
+
 # 注册监控器
 timing = Monitor(name='宗门任务')
 _command = ('宗门任务', 'zmrw')
-command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
+command = on_command("宗门任务", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
 _exit_command = ('关闭宗门任务', '!宗门任务', '!zmrw')
-exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+exit_command = on_command("关闭宗门任务", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
