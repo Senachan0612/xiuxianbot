@@ -83,20 +83,6 @@ class XiuXianBot:
             'xxbot_config_auto_apps': self.auto_apps,
         })
 
-        #     = {
-        #     # 'cg_timing': Monitor(name='出关', time=get_config('Default_ChuGuan', _type='eval')),
-        #     # 'tp_timing': Monitor(name='突破', time=get_config('Default_TuPo', _type='eval')),
-        #     # 'gz_timing': Monitor(name='复读'),
-        #     # 'tpd_timing': Monitor(name='突破丹'),
-        #     #
-        #     # 'zmrw_timing': Monitor(name='宗门任务', time=get_config('Default_ZongMenRenWu', _type='eval')),
-        #     # 'xsl_timing': Monitor(name='悬赏令'),
-        #     #
-        #     'sc_timing': Monitor(name='收草', time=self._config['Default_Interval_ShouCao', 24 * 60 * 60]),
-        #     # 'dx_timing': Monitor(name='雕像', time=24 * 60 * 60),
-        #     # 'zmdy_timing': Monitor(name='宗门丹药', time=24 * 60 * 60),
-        # }
-
     """配置 设置相关"""
 
     def load_configs(self):
