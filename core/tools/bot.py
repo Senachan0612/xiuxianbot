@@ -149,7 +149,7 @@ class XiuXianBot:
     def get_timing(self, name):
         """获取应用监控器"""
         app = self(name)
-        return app['timing']
+        return app.timing
 
     def get_regular_time(self, name, default, days=0):
         """获取定时"""

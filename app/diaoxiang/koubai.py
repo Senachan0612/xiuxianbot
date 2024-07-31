@@ -2,7 +2,7 @@
 
 import re
 
-from nonebot.plugin.on import on_fullmatch, on_regex
+from nonebot.plugin.on import on_fullmatch, on_regex, on_keyword
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
 from nonebot.rule import to_me
@@ -89,6 +89,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 task_finish_pattern = r'(神秘的环奈显灵了|道友今天已经叩拜过了)'
 command_dx_kb_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
+command_dx_kb_false = on_keyword({'你雕像呢'}, rule=to_me(), priority=100, block=True)
 
 
 @command_dx_kb_ture.handle()
@@ -100,3 +101,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     monitor('regular')
     monitor.set_time(time)
+
+
+@command_dx_kb_false.handle()
+async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    if eventCheck.api_monitor_check__active_app__xxbot_event(event, timing, monitor):
+        return
+    monitor('exit')

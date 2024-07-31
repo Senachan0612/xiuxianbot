@@ -159,12 +159,11 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if eventCheck.api_monitor_check__active_app__xxbot_event(event, timing, monitor):
         return
 
-    task_level = xxBot['xxBot_Config_ZongMen_Task_Level', [1, 2, 3]]
+    task_level = xxBot['ZongMen_Task_Level', [1, 2, 3]]
     task_list = (_task for _level, _tasks in TaskList.items() if _level in task_level for _task in _tasks)
-    cmd_msg = str(msg)
 
     # 有效任务
-    target_task = [_money for _content, _money in task_list if re.search(re.escape(_content), cmd_msg)]
+    target_task = [_money for _content, _money in task_list if re.search(re.escape(_content), str(msg))]
 
     if target_task:
         await command_jq_ture.send(xxBot.msg__at_xxbot + Message(f'灵庄取灵石 {sum(target_task)}'))

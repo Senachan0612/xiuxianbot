@@ -26,7 +26,7 @@ XiuXian__Regular_ZongMenRenWu = [12<*时*>, 00<*分*>]
 # 宗门丹药 默认 23:30
 XiuXian__Regular_ZongMenDanYao = [23<*时*>, 30<*分*>]
 # 叩拜雕像 默认 23:30
-XiuXian__Regular_CD_KouBaiDiaoXiang = [23<*时*>, 30<*分*>]
+XiuXian__Regular_KouBaiDiaoXiang = [23<*时*>, 30<*分*>]
 
 ## 默认事件间隔配置（秒）
 # 收草
@@ -41,6 +41,6 @@ XiuXian__CD_TuPo = 1 * 30 * 60
 XiuXian__CD_ChuBiGuan = 1 * 60 * 60
 
 ## 宗门任务 1-2%战斗 2-2%灵石 3-2.2% 4-4%
-XiuXian__ZongMen_Task_Level = [1, 2, 3, ]
+XiuXian__ZongMen_Task_Level = [3, ]
 
 ```
