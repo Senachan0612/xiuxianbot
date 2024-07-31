@@ -1,14 +1,11 @@
 """宗门丹药功能"""
 
 import re
-import asyncio
-import datetime
-from collections import namedtuple
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_regex, on_fullmatch
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     Monitor, LoopEvent,
@@ -20,10 +17,9 @@ from . import (
 
 # 注册监控器
 timing = Monitor(name='宗门丹药')
-_command = ('宗门丹药', 'zmdy')
-command = on_command('宗门丹药', aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭宗门丹药', '!宗门丹药', '!zmdy')
-exit_command = on_command('关闭宗门丹药', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+
+command = on_fullmatch(('宗门丹药', 'zmdy'), rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭宗门丹药', '!宗门丹药', '!zmdy'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -91,7 +87,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 """宗门丹药领取"""
 
 task_finish_pattern = r'(道友成功领取到丹药|道友已经领取过了，不要贪心哦)'
-command_zmdy_lq_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP)
+command_zmdy_lq_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 
 @command_zmdy_lq_ture.handle()

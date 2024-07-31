@@ -24,11 +24,7 @@ class XiuXianBot:
     # 自启动
     auto_apps = {}
     # 配置信息
-    config_dict = {
-        'is_use_due': False,  # 使用肚饿丹
-        'is_auto_use_due': False,  # 自动使用肚饿丹
-        'auto_use_due_level': '渡劫境圆满',  # 肚饿丹自动服用境界
-    }
+    config_dict = {}
     # 日志信息
     infos = {}
 
@@ -180,13 +176,16 @@ class XiuXianBot:
 
     """配置信息 相关"""
 
-    def set_config(self, name, default=False):
+    def set_config(self, name, default=False, delete=False):
         """设置配置信息"""
-        self['xxbot_config_configs'][name] = default
+        if delete:
+            self['xxbot_config_configs'].pop(name, default)
+        else:
+            self['xxbot_config_configs'][name] = default
 
     def get_config(self, name, default=False):
         """获取配置信息"""
-        return self['xxbot_config_configs'].get(name, default)
+        return self['xxbot_config_configs'].setdefault(name, default)
 
     """日志相关"""
 
@@ -233,15 +232,20 @@ class XiuXianBot:
 
     """通用回复模板"""
 
+    @staticmethod
+    def msg__at(_id):
+        """at 命令"""
+        return Message(f"[CQ:at,qq={_id}] ")
+
     @property
     def msg__at_xxbot(self):
         """at xxbot 命令"""
-        return Message(f"[CQ:at,qq={self.xxBotId}] ")
+        return self.msg__at(self.xxBotId)
 
     @property
     def msg__at_bot(self):
         """at bot 命令"""
-        return Message(f"[CQ:at,qq={self.BotId}] ")
+        return self.msg__at(self.BotId)
 
     """通用校验"""
 

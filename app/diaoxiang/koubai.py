@@ -2,10 +2,10 @@
 
 import re
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_fullmatch, on_regex
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     Monitor, LoopEvent,
@@ -18,10 +18,8 @@ from . import (
 # 注册监控器
 timing = Monitor(name='叩拜雕像')
 
-_command = ('叩拜雕像', 'kbdx')
-command = on_command('叩拜雕像', aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭叩拜雕像', '!叩拜雕像', '!kbdx')
-exit_command = on_command('关闭叩拜雕像', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+command = on_fullmatch(('叩拜雕像', 'kbdx'), rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭叩拜雕像', '!叩拜雕像', '!kbdx'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -80,6 +78,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 @exit_command.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    monitor('exit')
     eventCheck.api_monitor_check_and_control__update_state_by_user(event, timing, state={
         'state': 'exit',
         'msg': '手动结束',
@@ -89,7 +88,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 """雕像叩拜"""
 
 task_finish_pattern = r'(神秘的环奈显灵了|道友今天已经叩拜过了)'
-command_dx_kb_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP)
+command_dx_kb_ture = on_regex(pattern=task_finish_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 
 @command_dx_kb_ture.handle()

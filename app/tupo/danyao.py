@@ -6,10 +6,10 @@ import re
 import asyncio
 from collections import namedtuple
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_fullmatch, on_keyword, on_regex
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     DataPath,
@@ -129,10 +129,9 @@ def get_level_index(_level, _default_index):
 
 # 注册监控器
 timing = Monitor(name='突破丹药', time=60)
-_command = ('突破丹药', 'tpdy')
-command = on_command('突破丹药', aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭突破丹药', '!突破丹药', '!tpdy')
-exit_command = on_command('关闭突破丹药', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+
+command = on_fullmatch(('突破丹药', 'tpdy'), rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭突破丹药', '!突破丹药', '!tpdy'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -167,7 +166,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 monitor = Monitor(name='服用丹药监控')
 
-command_fydy = on_command('', rule=keyword('恭喜道友突破'), priority=100, block=True)
+command_fydy = sc_command_success = on_keyword({'恭喜道友突破'}, rule=to_me(), priority=100)
 
 
 @command_fydy.handle()
@@ -212,7 +211,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 """服用突破丹 失败"""
 
 fydy_false_pattern = r'(道友没有该丹药|道友不满足使用条件)'
-command_fydy_false = on_regex(pattern=fydy_false_pattern, flags=re.I, permission=GROUP)
+command_fydy_false = on_regex(pattern=fydy_false_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 
 @command_fydy_false.handle()
@@ -229,7 +228,7 @@ ExeCommandTruePattern = '使用|启用'
 ExeCommandFalsePattern = '禁用|停用'
 ExeTypePattern = '立刻'
 command_use_due_pattern = fr'({DuEDanNamePattern})\s*({ExeTypePattern}\s*)?({ExeCommandTruePattern}|{ExeCommandFalsePattern})|\s*({ExeTypePattern}\s*)?({ExeCommandTruePattern}|{ExeCommandFalsePattern})\s*({DuEDanNamePattern})'
-command_use_due = on_regex(pattern=command_use_due_pattern, flags=re.I, permission=GROUP)
+command_use_due = on_regex(pattern=command_use_due_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 
 @command_use_due.handle()

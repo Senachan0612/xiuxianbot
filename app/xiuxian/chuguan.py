@@ -3,10 +3,10 @@
 import re
 import asyncio
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex, on_keyword
+from nonebot.plugin.on import on_regex, on_keyword, on_fullmatch
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     DataPath,
@@ -20,18 +20,9 @@ from . import (
 # 注册监控器
 timing = Monitor(name='出闭关')
 
-'''
-
-re.compile(r'(出闭关|cbg)\s*(\d+)?\s*(\d+)?')
-
-正则取出出闭关|cbg '2020-02-02'的日期
-
-'''
-
 command_pattern = r'(出闭关|cbg)\s*(\d+)?\s*(\d+)?'
-command = on_regex(pattern=command_pattern, flags=re.I, permission=GROUP)
-_exit_command = ('关闭出闭关', '!出闭关', '!cbg')
-exit_command = on_command('关闭出闭关', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+command = on_regex(pattern=command_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭出闭关', '!出闭关', '!cbg'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -96,7 +87,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 """结束闭关 激活部分功能"""
 
-command_cg_true = on_keyword({'闭关结束'}, rule=to_me())
+command_cg_true = on_keyword({'闭关结束'}, rule=to_me(), priority=100)
 
 UnpauseApps = ['突破', '宗门任务']
 

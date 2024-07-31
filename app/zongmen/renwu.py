@@ -4,13 +4,12 @@ import os
 import json
 import re
 import asyncio
-import datetime
 from collections import namedtuple
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_regex, on_keyword, on_fullmatch
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     DataPath,
@@ -64,10 +63,9 @@ except Exception:
 
 # 注册监控器
 timing = Monitor(name='宗门任务')
-_command = ('宗门任务', 'zmrw')
-command = on_command("宗门任务", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭宗门任务', '!宗门任务', '!zmrw')
-exit_command = on_command("关闭宗门任务", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+
+command = on_fullmatch(('宗门任务', 'zmrw'), rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭宗门任务', '!宗门任务', '!zmrw'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -138,10 +136,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 """宗门任务接取"""
 
-command_jq_false = on_command('', rule=keyword('道友已接取3次，今日无法再获取宗门任务了'), priority=100, block=True)
+command_jq_false = on_keyword({'道友已接取3次，今日无法再获取宗门任务了'}, rule=to_me(), priority=100)
 # 任务内容
 task_pattern = r'(%s)' % '|'.join(re.escape(_task.content) for _, _tasks in TaskList.items() for _task in _tasks)
-command_jq_ture = on_regex(pattern=task_pattern, flags=re.I, permission=GROUP)
+command_jq_ture = on_regex(pattern=task_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 
 @command_jq_false.handle()
@@ -203,13 +201,13 @@ task_wc_monitor = Monitor(name='宗门任务完成')
 
 # 有效任务完成反馈
 task_wc_pattern = r'(道友为了完成任务购买宝物消耗灵石|道友大战一番，气血减少)'
-command_wc_ture = on_regex(pattern=task_wc_pattern, flags=re.I, permission=GROUP)
+command_wc_ture = on_regex(pattern=task_wc_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
-command_wc_false_no_hp = on_command('', rule=keyword('重伤未愈，动弹不得'), priority=100, block=True)
-command_wc_false_no_money = on_command('', rule=keyword('道友的灵石不足以完成宗门任务'), priority=100, block=True)
+command_wc_false_no_hp = on_keyword({'重伤未愈，动弹不得'}, rule=to_me(), priority=100)
+command_wc_false_no_money = on_keyword({'道友的灵石不足以完成宗门任务'}, rule=to_me(), priority=100)
 
-command_wc_false_no_task = on_command('', rule=keyword('道友目前还没有宗门任务'), priority=100, block=True)
-command_wc_false_no_time = on_command('', rule=keyword('剩余CD'), priority=100, block=True)
+command_wc_false_no_task = on_keyword({'道友目前还没有宗门任务'}, rule=to_me(), priority=100)
+command_wc_false_no_time = on_keyword({'剩余CD'}, rule=to_me(), priority=100)
 
 
 @command_wc_ture.handle()

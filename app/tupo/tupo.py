@@ -2,10 +2,10 @@
 
 import re
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_fullmatch, on_keyword, on_regex
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, GROUP
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     Monitor, LoopEvent,
@@ -17,10 +17,9 @@ from . import (
 
 # 注册监控器
 timing = Monitor(name='突破')
-_command = ('突破', 'tp')
-command = on_command('突破', aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭突破', '!突破', '!tp')
-exit_command = on_command('关闭突破', aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+
+command = on_fullmatch(('突破', 'tp'), rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭突破', '!突破', '!tp'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -99,7 +98,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 """突破成功"""
 
 _task_tp_ture_pattern = r'(恭喜道友突破|道友突破失败)'
-command_tp_ture = on_regex(pattern=_task_tp_ture_pattern, flags=re.I, permission=GROUP)
+command_tp_ture = on_regex(pattern=_task_tp_ture_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 
 @command_tp_ture.handle()
@@ -112,15 +111,14 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 
 """突破失败"""
+command_tp_false_no_hp = on_keyword({'道友状态不佳，无法突破'}, rule=to_me(), priority=100)
+command_tp_false_no_exp = on_keyword({'道友的修为不足以突破'}, rule=to_me(), priority=100)
+command_tp_false_no_due = on_keyword({'你没有丹药'}, rule=to_me(), priority=100)
+command_tp_false_no_count = on_keyword({'超过今日上限，道友莫要心急，请先巩固境界'}, rule=to_me(), priority=100)
 
-command_tp_false_no_hp = on_command('', rule=keyword('道友状态不佳，无法突破'), priority=100, block=True)
-command_tp_false_no_exp = on_command('', rule=keyword('道友的修为不足以突破'), priority=100, block=True)
-command_tp_false_no_due = on_command('', rule=keyword('你没有丹药'), priority=100, block=True)
-command_tp_false_no_count = on_command('', rule=keyword('超过今日上限，道友莫要心急，请先巩固境界'), priority=100, block=True)
+command_tp_false_no_time = on_keyword({'目前无法突破'}, rule=to_me(), priority=100)
 
-command_tp_false_no_time = on_command('', rule=keyword('目前无法突破'), priority=100, block=True)
-
-command_tp_false = on_command('', rule=keyword('道友已是最高境界'), priority=100, block=True)
+command_tp_false = on_keyword({'道友已是最高境界'}, rule=to_me(), priority=100)
 
 
 @command_tp_false_no_hp.handle()

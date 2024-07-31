@@ -10,3 +10,4 @@ from .. import (
 )
 
 from . import chuguan
+from . import fudu

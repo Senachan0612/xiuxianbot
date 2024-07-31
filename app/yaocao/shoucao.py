@@ -2,10 +2,10 @@
 
 import re
 
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_fullmatch, on_keyword
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
-from nonebot.rule import to_me, keyword, fullmatch
+from nonebot.rule import to_me
 
 from . import (
     Monitor, LoopEvent,
@@ -17,10 +17,9 @@ from . import (
 
 # 注册监控器
 timing = Monitor(name='收草')
-_command = ('收草', 'sc')
-command = on_command("收草", aliases=set(_command), rule=fullmatch(_command), priority=60, block=True)
-_exit_command = ('关闭收草', '!收草', '!sc')
-exit_command = on_command("关闭收草", aliases=set(_exit_command), rule=fullmatch(_exit_command), priority=60, block=True)
+
+command = on_fullmatch(('收草', 'sc'), rule=to_me(), priority=60, block=True)
+exit_command = on_fullmatch(('关闭收草', '!收草', '!sc'), rule=to_me(), priority=60, block=True)
 
 # 注册应用
 xxBot.load_apps({
@@ -32,7 +31,7 @@ xxBot.load_apps({
 })
 
 monitor = Monitor(name='收草监控')
-Message__sc = xxBot.msg__at_xxbot + Message(f"灵田收取")
+Message__sc = xxBot.msg__at_xxbot + Message('灵田收取')
 
 
 @command.handle()
@@ -87,7 +86,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 
 """收草成功"""
-sc_command_success = on_command("", aliases={""}, rule=keyword('成功收获'), priority=100, block=True)
+sc_command_success = on_keyword({'成功收获'}, rule=to_me(), priority=100)
 
 
 @sc_command_success.handle()
@@ -100,7 +99,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 
 """收草失败"""
-sc_command_false = on_command("", aliases={""}, rule=keyword('还不能收取'), priority=100, block=True)
+sc_command_false = on_keyword({'还不能收取'}, rule=to_me(), priority=100)
 
 
 @sc_command_false.handle()
