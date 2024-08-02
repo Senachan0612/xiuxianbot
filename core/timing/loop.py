@@ -1,10 +1,16 @@
+"""事件循环器"""
+
 import asyncio
 
-from . import TimingBase
-from . import Loop_Max_Count, Loop_Send_Time, Loop_Await_Time
+from . import Timing
+from . import Config
+
+Loop_Max_Count = float(Config['Loop_Max_Count', 'inf'])
+Loop_Send_Time = float(Config['Loop_Send_Time', 10])
+Loop_Await_Time = float(Config['Loop_Await_Time', 1])
 
 
-class LoopEvent(TimingBase):
+class LoopEvent(Timing):
 
     def __init__(self, event, name=False):
         super(LoopEvent, self).__init__(name)
