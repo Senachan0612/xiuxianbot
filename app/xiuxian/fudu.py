@@ -22,7 +22,7 @@ from . import (
 # 注册监控器
 timing = Monitor(name='复读')
 
-command = on_fullmatch(('复读', 'fd'), rule=to_me(), priority=60, block=True)
+command = on_fullmatch(('复读', 'fd'), rule=to_me(), priority=50)
 exit_command = on_fullmatch(('关闭复读', '!复读', '!fd'), rule=to_me(), priority=60, block=True)
 
 # 注册应用

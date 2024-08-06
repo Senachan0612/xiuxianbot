@@ -52,11 +52,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     """监听"""
     while True:
-        if timing.check('is_finish'):
-            break
-
         if timing.check('is_regular'):
             await timing.sleep()
+        if timing.check('is_finish'):
+            break
 
         # 执行监听
         timing('running')
@@ -64,6 +63,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         await command.send(xxBot.msg__at_xxbot + Message('灵石出关'))
         await asyncio.sleep(5)
         await command.send(xxBot.msg__at_xxbot + Message('闭关'))
+
+        if timing.check('is_finish'):
+            break
 
         count -= 1
         if count <= 0:

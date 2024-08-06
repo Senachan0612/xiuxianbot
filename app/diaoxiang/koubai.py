@@ -54,11 +54,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     """监听"""
     while True:
-        if timing.check('is_finish'):
-            break
-
         if timing.check('is_regular'):
             await timing.sleep()
+        if timing.check('is_finish'):
+            break
 
         went_await = loop.add(loop.loop_await_cmd('dy lq', monitor=monitor))
         went_send = loop.add(loop.loop_send_cmd('dy lq', cmd=command, msg=Message__kbdx))
@@ -68,6 +67,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         monitor('init')
         await went_await
         await went_send
+
+        if timing.check('is_finish'):
+            break
 
         if monitor.check('is_regular'):
             timing.set_time(monitor.time)

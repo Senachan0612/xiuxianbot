@@ -118,6 +118,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         """ 宗门任务 完成 """
         await __task_wc(_cmd=command, _event=event)
 
+        if timing.check('is_finish'):
+            break
+
         if monitor.check('is_regular'):
             timing.set_time(monitor.time)
             timing('regular', msg=timing.dt_string(timing.exec_time))

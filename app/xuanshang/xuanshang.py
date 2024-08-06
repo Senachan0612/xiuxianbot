@@ -172,6 +172,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         if not _monitor.check('is_done'):
             break
 
+        if timing.check('is_finish'):
+            break
+
         timing.set_time(_monitor.time)
         timing('regular', msg=timing.dt_string(timing.exec_time))
 

@@ -183,7 +183,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     # 渡厄丹启用
     if xxBot.get_config('is_use_due'):
-        auto_use_due_level = xxBot.set_config('auto_use_due_level', '渡劫境圆满')
+        auto_use_due_level = xxBot.get_config('auto_use_due_level', '渡劫境圆满')
         index__auto_use_due_level = get_level_index(auto_use_due_level, float('inf'))
         index__level = get_level_index(level, -1)
         # 设置自动使用渡厄
