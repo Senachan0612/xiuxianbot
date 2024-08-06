@@ -21,10 +21,10 @@ from . import (
 # 加载配置
 File_Path = r'%s\%s' % (DataPath, 'XuanShangLing.json')
 DefaultTaskList = [
-    # 九品 性平
-    ['离火梧桐芝', '尘磊岩麟果', '太乙碧莹花', '森檀木', '龙须藤', '地龙干', ],
     # 功法 01
     ['冲击之刃', '夏日闪耀之力', ],
+    # 九品 性平
+    ['离火梧桐芝', '尘磊岩麟果', '太乙碧莹花', '森檀木', '龙须藤', '地龙干', ],
     # 八品 性平
     ['鎏鑫天晶草', '木灵三针花', '阴阳黄泉花', '厉魂血珀', '狼桃', '霸王花', ],
     # 功法 02
@@ -93,7 +93,11 @@ def xsl_format(_task):
 def xsl_get_target(_task):
     """获取最有效悬赏"""
     _format = xsl_format(str(_task))
-    _map = {task_mapping.get(_n, float('inf')): (_i, _t, _n) for _i, _t, _n in _format}
+    # 优先级计算公式>>>
+    # 物品优先级 = 等级 * 100
+    # 时间优先级 = 每30分 * 100
+    # 优先级 = 物品优先级 - 时间优先级
+    _map = {task_mapping.get(_n, float('inf')) - _t / (30 * 60) * 100: (_i, _t, _n) for _i, _t, _n in _format}
     return _map[min(_map)]
 
 
