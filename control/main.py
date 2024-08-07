@@ -2,9 +2,10 @@
 
 import re
 import asyncio
+from collections import namedtuple
 
 import nonebot
-from nonebot.plugin.on import on_command, on_shell_command, on_regex
+from nonebot.plugin.on import on_fullmatch, on_startswith, on_regex
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
 from nonebot.rule import to_me, keyword, fullmatch, startswith
@@ -75,7 +76,7 @@ async def auto_exec_command():
 """查看xxbot信息"""
 
 _cmd_status = ('修仙状态', '修仙信息', 'xxzt', 'xxxx')
-cmd_status = on_command('修仙信息', aliases=set(_cmd_status), rule=fullmatch(_cmd_status), priority=60, block=True)
+cmd_status = on_fullmatch(_cmd_status, rule=to_me(), priority=60, block=True)
 
 
 @cmd_status.handle()
@@ -101,7 +102,8 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 """授权"""
 
-cmd_set_config__security = on_command('', rule=startswith(msg=('设置授权', '取消授权')), priority=60, block=True)
+_cmd_cmd_set_config__security = ('设置授权', '取消授权')
+cmd_set_config__security = on_startswith(_cmd_cmd_set_config__security, rule=to_me(), priority=60, block=True)
 
 
 @cmd_set_config__security.handle()
@@ -139,8 +141,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 """同步配置"""
 _cmd_set_config__save = ('同步配置', '保存配置')
-cmd_set_config__save = on_command(
-    '同步配置', aliases=set(_cmd_set_config__save), rule=fullmatch(_cmd_set_config__save), priority=60, block=True)
+cmd_set_config__save = on_fullmatch(_cmd_set_config__save, rule=to_me(), priority=60, block=True)
 
 
 @cmd_set_config__save.handle()
@@ -154,3 +155,115 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     await cmd_set_config__save.finish(
         at_user + Message(f'执行成功，配置已同步！')
     )
+
+
+"""修改配置"""
+_cmd_set_config__update = ('修改配置', '修改参数', '设置参数')
+_cmd_set_config__update_pattern = rf'({"|".join(_cmd_set_config__update)})\s*(\S*)\s*:\s*(.*)'
+cmd_set_config__update = on_regex(_cmd_set_config__update_pattern, rule=to_me(), priority=60, block=True)
+_cmd_set_config__update_help = ('配置帮助', '参数帮助', '配置help', '参数help', '配置?', '参数?')
+cmd_set_config__update_help = on_fullmatch(_cmd_set_config__update_help, rule=to_me(), priority=60, block=True)
+
+
+# 配置映射字典
+def print_local_config(_config):
+    """输出配置信息"""
+    return xxBot[_config["key"]]
+
+
+Config__CD = {
+    'print': '单位：秒',
+    'func': lambda value: int(eval(value))
+}
+Config__Regular = {
+    'print': '[时, 分]',
+    'func': lambda value: [int(x) for x in eval(value)[:2]]
+}
+
+ConfigMap = {
+    # CD
+    '收草': {
+        'key': 'CD_ShouCao',
+        'val': Config__CD,
+    },
+    '出闭关': {
+        'key': 'CD_ChuBiGuan',
+        'val': Config__CD,
+    },
+    '突破': {
+        'key': 'CD_TuPo',
+        'val': Config__CD,
+    },
+    '宗门任务刷新': {
+        'key': 'CD_ZongMenRenWu_ShuaXin',
+        'val': Config__CD,
+    },
+    '宗门任务完成': {
+        'key': 'CD_ZongMenRenWu_WanChen',
+        'val': Config__CD,
+    },
+    # Regular
+    '宗门任务定时': {
+        'key': 'Regular_ZongMenRenWu',
+        'val': Config__Regular,
+    },
+    '宗门丹药定时': {
+        'key': 'Regular_ZongMenDanYao',
+        'val': Config__Regular,
+    },
+    '叩拜雕像定时': {
+        'key': 'Regular_KouBaiDiaoXiang',
+        'val': Config__Regular,
+    },
+    # 其他
+    '宗门任务等级': {
+        'key': 'ZongMen_Task_Level',
+        'val': {
+            'print': '[1, 2, 3, 4]',
+            'func': lambda value: list({int(x) for x in eval(value)} & {1, 2, 3, 4})
+        },
+    },
+}
+
+
+@cmd_set_config__update.handle()
+async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    if not await super_admin_event(event, cmd_set_config__security):
+        return
+
+    # 获取配置信息
+    _, config_name, config_val = re.compile(_cmd_set_config__update_pattern).search(str(event.message)).groups()
+    # 修复[]的转义
+    config_val = config_val.replace('&#91;', '[').replace('&#93;', ']')
+
+    def _f():
+        config = ConfigMap.get(config_name)
+        if not config:
+            return '未知参数！发送"配置帮助"获取帮助...'
+
+        key = config['key']
+        # 执行更新
+        try:
+            value = config['val']['func'](config_val)
+        except Exception:
+            return ('参数解析异常！'
+                    f'\n本次：{config_val}'
+                    f'\n当前：{print_local_config(config)}')
+
+        xxBot.update_configs({key: value})
+        return ('参数更新成功！'
+                f'\n当前：{print_local_config(config)}')
+
+    await cmd_set_config__update.finish(xxBot.msg__at(event.user_id) + Message(_f()))
+
+
+@cmd_set_config__update_help.handle()
+async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
+    if not admin_event(event):
+        return
+
+    await cmd_set_config__update.finish(xxBot.msg__at(event.user_id) + Message(
+        '支持维护的参数列表：\n' +
+        '\n'.join(f'{name} : {config["val"]["print"]}；{print_local_config(config)}'
+                  for name, config in ConfigMap.items())
+    ))
