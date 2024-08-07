@@ -108,7 +108,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     pattern = r'：([\d.]+)(\D+)之后'
-    match = re.search(pattern, str(msg))
+    match = re.search(pattern, str(event.message))
     time, unit = float(match.group(1)), match.group(2).strip()
 
     if unit == '小时':

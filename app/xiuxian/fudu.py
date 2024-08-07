@@ -148,10 +148,10 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not eventCheck.api_check__event(event, at_me=True):
         return
 
-    aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(str(msg).strip())
+    aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(str(event.message).strip())
     if aliases_reply:
         aliases_reply = Message(aliases_reply)
-    elif re.compile(xiuxian_fudu_pattern).match(str(msg)):
+    elif re.compile(xiuxian_fudu_pattern).match(str(event.message)):
         aliases_reply = msg
     else:
         return
@@ -170,7 +170,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not eventCheck.api_check__event(event, at_me=True):
         return
 
-    match = re.compile(rf'({"|".join(_command_aliases_set)})\s+(\S+)(?:\s*:\s*(.*))?').match(str(msg))
+    match = re.compile(rf'({"|".join(_command_aliases_set)})\s+(\S+)(?:\s*:\s*(.*))?').match(str(event.message))
     if not match:
         await command_aliases_set.finish(
             xxBot.msg__at(event.user_id) +

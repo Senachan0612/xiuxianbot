@@ -43,7 +43,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not timing('start'):
         return
 
-    _, time, count = re.compile(command_pattern).match(str(msg)).groups()
+    _, time, count = re.compile(command_pattern).match(str(event.message)).groups()
     time, count = time or 0, count or float('inf')
 
     if time:

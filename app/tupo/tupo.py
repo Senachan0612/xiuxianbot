@@ -155,7 +155,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     pattern = r'还需要([\d.]+)(\D+)$'
-    match = re.search(pattern, str(msg))
+    match = re.search(pattern, str(event.message))
     time, unit = float(match.group(1)), match.group(2).strip()
 
     if unit == '分钟':

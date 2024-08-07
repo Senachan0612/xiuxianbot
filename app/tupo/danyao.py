@@ -177,7 +177,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     timing(msg='开始服用突破丹')
 
     pattern = r'突破(\D+)成功'
-    match = re.search(pattern, str(msg))
+    match = re.search(pattern, str(event.message))
     # 境界
     level = match.group(1).strip()
 
@@ -233,7 +233,7 @@ command_use_due = on_regex(pattern=command_use_due_pattern, flags=re.I, permissi
 
 @command_use_due.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
-    str_msg = str(msg)
+    str_msg = str(event.message)
 
     # 是否启用
     is_use_due = bool(re.compile(rf'({ExeCommandTruePattern})').search(str_msg))

@@ -242,7 +242,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     pattern = r'预计(\d+\.\d+)(分钟)后可结束'
-    match = re.search(pattern, str(msg))
+    match = re.search(pattern, str(event.message))
     time, unit = float(match.group(1)), match.group(2).strip()
     if unit == '分钟':
         time *= 60

@@ -166,7 +166,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     task_list = (_task for _level, _tasks in TaskList.items() if _level in task_level for _task in _tasks)
 
     # 有效任务
-    target_task = [_money for _content, _money in task_list if re.search(re.escape(_content), str(msg))]
+    target_task = [_money for _content, _money in task_list if re.search(re.escape(_content), str(event.message))]
 
     if target_task:
         await command_jq_ture.send(xxBot.msg__at_xxbot + Message(f'灵庄取灵石 {sum(target_task)}'))
@@ -246,7 +246,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     pattern = r'剩余CD:([\d.]+)秒'
-    time = float(re.search(pattern, str(msg)).group(1))
+    time = float(re.search(pattern, str(event.message)).group(1))
 
     task_wc_monitor('regular')
     task_wc_monitor.set_time(time)

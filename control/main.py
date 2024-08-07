@@ -56,7 +56,7 @@ async def auto_exec_command():
                 message_type="group",
                 message_id=-1,
                 message=msg,
-                raw_message=str(msg),
+                raw_message=str(event.message),
                 font=0,
                 sender={},
                 to_me=bool(at_bot)
@@ -115,7 +115,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     # 获取授权信息
     pattern = re.compile(r'(设置授权|取消授权)?\s*(用户|群组|超管)?[\s,]*(\d+[\s,]*)+', re.DOTALL)
-    match = pattern.search(str(msg))
+    match = pattern.search(str(event.message))
 
     try:
         operate = match.group(1)
