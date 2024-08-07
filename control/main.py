@@ -56,7 +56,7 @@ async def auto_exec_command():
                 message_type="group",
                 message_id=-1,
                 message=msg,
-                raw_message=str(event.message),
+                raw_message=str(msg),
                 font=0,
                 sender={},
                 to_me=bool(at_bot)
