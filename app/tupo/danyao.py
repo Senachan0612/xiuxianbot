@@ -227,7 +227,10 @@ DuEDanNamePattern = '渡厄丹|肚饿丹'
 ExeCommandTruePattern = '使用|启用'
 ExeCommandFalsePattern = '禁用|停用'
 ExeTypePattern = '立刻'
-command_use_due_pattern = fr'({DuEDanNamePattern})\s*({ExeTypePattern}\s*)?({ExeCommandTruePattern}|{ExeCommandFalsePattern})|\s*({ExeTypePattern}\s*)?({ExeCommandTruePattern}|{ExeCommandFalsePattern})\s*({DuEDanNamePattern})'
+command_use_due_pattern = (
+    fr'^({DuEDanNamePattern})\s*({ExeTypePattern}\s*)?({ExeCommandTruePattern}|{ExeCommandFalsePattern})'
+    fr'|\s*({ExeTypePattern}\s*)?({ExeCommandTruePattern}|{ExeCommandFalsePattern})\s*({DuEDanNamePattern})'
+)
 command_use_due = on_regex(pattern=command_use_due_pattern, flags=re.I, permission=GROUP, rule=to_me(), priority=100)
 
 

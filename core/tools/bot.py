@@ -251,5 +251,9 @@ class XiuXianBot:
         """检查 是否为bot"""
         return _id == self.xxBotId
 
+    def check_is_eid(self, _id):
+        """检查 是否拥有事件权限"""
+        return self.check_is_xxbot(_id) or self.check_is_uid(_id)
+
 
 xxBot = XiuXianBot()

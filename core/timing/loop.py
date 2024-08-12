@@ -12,10 +12,11 @@ Loop_Await_Time = float(Config['Loop_Await_Time', 1])
 
 class LoopEvent(Timing):
 
-    def __init__(self, event, name=False):
+    def __init__(self, event, name=False, timing=False):
         super(LoopEvent, self).__init__(name)
 
         self.event = event
+        self.timing = timing
 
         self.task = dict()
         self.dataset = dict()
@@ -46,6 +47,9 @@ class LoopEvent(Timing):
 
     def check_task(self, index=False):
         """检查任务状态"""
+        if self.timing:
+            assert not self.timing.check('is_error')
+
         if index is False:
             return bool(self.task)
         return self.task.get(index)
@@ -78,7 +82,7 @@ class LoopEvent(Timing):
         """
         self.create_task(index)
 
-        while not monitor.check('is_break'):
+        while not monitor.check('is_break') and self.check_task(index):
             count -= 1
             if count < 0:
                 monitor('error')

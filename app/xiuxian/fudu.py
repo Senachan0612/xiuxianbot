@@ -137,7 +137,7 @@ try:
 except Exception:
     XiuXianFuDuList = DefaultXiuXianFuDuList
 
-xiuxian_fudu_pattern = r'(%s)' % '|'.join(DefaultXiuXianFuDuList)
+xiuxian_fudu_pattern = r'(%s)' % '|'.join(XiuXianFuDuList)
 command_fudu = on_message(rule=to_me(), priority=1000, block=True)
 
 
@@ -152,7 +152,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if aliases_reply:
         aliases_reply = Message(aliases_reply)
     elif re.compile(xiuxian_fudu_pattern).match(str(event.message)):
-        aliases_reply = msg
+        aliases_reply = event.message
     else:
         return
 
