@@ -200,7 +200,7 @@ command_cs = on_keyword({'道友的个人悬赏令'}, rule=to_me(), priority=100
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if eventCheck.api_monitor_check__active_app__xxbot_event(event, timing, xsl_cs_monitor):
         return
-    xsl_cs_monitor('done', msg=msg)
+    xsl_cs_monitor('done', msg=event.message)
 
 
 async def __task_cs(_cmd, _event):
