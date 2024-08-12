@@ -1,6 +1,6 @@
 """修仙辅助插件"""
 __author__ = "Sena"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import os
 import json
