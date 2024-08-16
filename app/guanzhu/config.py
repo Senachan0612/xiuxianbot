@@ -121,7 +121,7 @@ class GuanZhuConfig:
         # 首次执行，录入页码信息
         if not self.solve_page_sets:
             self.solve_page_sets.update(range(int(page_min) + 1, int(page_max) + 1))
-        elif page_min not in self.solve_page_sets:
+        elif int(page_min) not in self.solve_page_sets:
             return
 
         pattern = re.compile(r'编号【(\d+)】(.*?)：.*?\n.*?(-?\d+)%(减伤率|攻击力)')
@@ -179,7 +179,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not timing('start'):
         return
 
-    cate, name = re.compile(r'(装备|功法|装备功法|功法装备)录入\s*(\S*)').match(str(msg)).groups()
+    cate, name = re.compile(r'(装备|功法|装备功法|功法装备)录入\s*(\S*)').match(str(event.message)).groups()
     if not name and not eventCheck.api_check__app_event(event):
         return
 
@@ -253,7 +253,7 @@ command_print = on_startswith(('查看录入', '录入查看'), rule=to_me(), pr
 
 @command_print.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
-    _, name = re.compile(r'(查看录入|录入查看)\s*(\S*)').match(str(msg)).groups()
+    _, name = re.compile(r'(查看录入|录入查看)\s*(\S*)').match(str(event.message)).groups()
 
     if not name and eventCheck.api_check__xxbot_event(event):
         return

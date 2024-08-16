@@ -92,9 +92,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
             await __task_running(command, event, _level=int(level))
 
         if check(error_list):
-            await command.send(xxBot.msg__at(event.user_id) + Message('灌注失败！\n') + Message('\n'.join(error_list)))
+            await command.send(xxBot.msg__at(event.user_id) + Message('执行灌注失败！\n') + Message('\n'.join(error_list)))
         else:
-            await command.send(xxBot.msg__at(event.user_id) + Message('灌注结束！\n'))
+            await command.send(xxBot.msg__at(event.user_id) + Message('执行灌注结束！\n'))
     except AssertionError:
         await command.send(xxBot.msg__at(event.user_id) + Message(timing.msg))
 
@@ -509,7 +509,7 @@ class GuanZhu:
                         await self.get_status()
 
                 # 检查状态 当前hp占比 + 剩余血丹 < 10% 视为服用失败
-                if self.HP / self.HP_Max <= 0.01:
+                if self.HP / self.HP_Max <= 0.1:
                     continue
                 break
 
@@ -613,7 +613,7 @@ get_status_pattern = (
     r'.*道号：(.*?)\n'
     r'气血：(-?\d+\.?\d*)/(\d+\.?\d*)\n'
     r'真元：\d+\.?\d*/\d+\.?\d*\n'
-    r'攻击：\d+\.?\d* 攻击修炼：\d+级\(提升攻击力100%\)\n'
+    r'攻击：\d+\.?\d* 攻击修炼：\d+级\(提升攻击力\d+%\)\n'
     r'修炼效率：\d+%\n'
     r'会心：(-?\d+)%\n'
     r'减伤率：(\d+)%\n'
@@ -661,7 +661,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
     drugs_name, drugs_hp = re.compile(get_drugs_pattern).search(str(event.message)).groups()
     drug = int(drugs_hp)
-    if not (int(drug) != bot_gz.drug or int(drug) == 5 and bot_gz.drug == 10):
+    if not (int(drug) == bot_gz.drug or int(drug) in [5, 10] and bot_gz.drug == 15):
         bot_gz.drugs_monitor('error')
         return
     bot_gz.get_drugs_update_status(drug)
@@ -731,6 +731,7 @@ async def __task_running(_cmd, _event, _level):
     """灌注 开始灌注"""
     bot_gz.set_drugs(_level)
 
+    count = 2
     while True:
         if not bot_gz or not user_gz:
             return
@@ -747,12 +748,14 @@ async def __task_running(_cmd, _event, _level):
         result = await bot_gz.get_items(supply_range)
 
         # 更换装备
-        if any(result or []):
+        if count and any(result or []):
             bot_items, user_items = result
             await bot_gz.set_items(bot_items)
             await user_gz.set_items(user_items)
 
+            count -= 2
             continue
 
         # 抢劫
         await bot_gz.get_battle_combat()
+        count = 2
