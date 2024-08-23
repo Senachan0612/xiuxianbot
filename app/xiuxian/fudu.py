@@ -148,7 +148,11 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     if not eventCheck.api_check__event(event, at_me=True):
         return
 
-    aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(str(event.message).strip())
+    # 获取内容 次数
+    match = re.match(r'(.*\S)\s*\*?\s*(\d+)?', str(event.message))
+    fd_msg, fd_count = match.groups()
+
+    aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(str(fd_msg).strip())
     if aliases_reply:
         aliases_reply = Message(aliases_reply)
     elif re.compile(xiuxian_fudu_pattern).match(str(event.message)):
@@ -156,7 +160,14 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     else:
         return
 
-    await command_fudu.send(xxBot.msg__at_xxbot + aliases_reply)
+    while True:
+        await command_fudu.send(xxBot.msg__at_xxbot + aliases_reply)
+        await asyncio.sleep(1)
+
+        if not fd_count:
+            break
+
+        fd_count = int(fd_count or 0) - 1
 
 
 """复读别名"""

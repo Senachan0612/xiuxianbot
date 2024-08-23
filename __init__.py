@@ -20,7 +20,7 @@ from nonebot.plugin.on import on_regex, on_command
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
-from .data import DataPath
+from .data import DataPath, UserData
 from .core import (
     Config,  # xxbot配置
     Monitor,  # 事件循环器
