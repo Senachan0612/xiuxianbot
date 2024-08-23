@@ -149,8 +149,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     # 获取内容 次数
-    match = re.match(r'(.*\S)\s*\*?\s*(\d+)?', str(event.message))
-    fd_msg, fd_count = match.groups()
+    fd_msg, fd_count = (re.split(r'\s*\*+\s*', '坊市下架10 * 22') + [0])[:2]
 
     aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(str(fd_msg).strip())
     if aliases_reply:
