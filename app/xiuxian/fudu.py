@@ -149,24 +149,22 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         return
 
     # 获取内容 次数
-    fd_msg, fd_count = (re.split(r'\s*\*+\s*', '坊市下架10 * 22') + [0])[:2]
+    fd_msg, fd_count = (re.split(r'\s*\*+\s*', str(event.message)) + [0])[:2]
 
-    aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(str(fd_msg).strip())
+    aliases_reply = xxBot.get_config('fudu_aliases_dict', default={}).get(fd_msg.strip())
     if aliases_reply:
         aliases_reply = Message(aliases_reply)
-    elif re.compile(xiuxian_fudu_pattern).match(str(event.message)):
-        aliases_reply = event.message
+    elif re.compile(xiuxian_fudu_pattern).match(fd_msg):
+        aliases_reply = fd_msg
     else:
         return
 
-    while True:
+    fd_count = int(fd_count or 0) or 1
+    while fd_count:
         await command_fudu.send(xxBot.msg__at_xxbot + aliases_reply)
         await asyncio.sleep(1)
 
-        if not fd_count:
-            break
-
-        fd_count = int(fd_count or 0) - 1
+        fd_count -= 1
 
 
 """复读别名"""
