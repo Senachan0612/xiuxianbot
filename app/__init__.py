@@ -10,9 +10,9 @@ from .. import (
 )
 
 # 加载功能
+from . import cron
 from . import yaocao
 from . import zongmen
-from . import diaoxiang
 from . import tupo
 from . import xiuxian
 from . import xuanshang
