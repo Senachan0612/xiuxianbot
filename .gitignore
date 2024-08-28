@@ -1,6 +1,6 @@
 # 编译文件
 *.pyc
-# json文件
-*.json
+# data
+data/*.json
 # 测试文件
 text.*
