@@ -34,7 +34,7 @@ class Service(Task):
         if not self.timing('start'):
             return
 
-        self.timing('running', msg='执行中')
+        self.timing('running', msg='执行中...')
 
     async def handle_exit_cmd(self, event: GroupMessageEvent, msg: Message = CommandArg()):
         """退出"""
@@ -45,3 +45,4 @@ class Service(Task):
 
 
 from . import tupodan
+from . import fudu
