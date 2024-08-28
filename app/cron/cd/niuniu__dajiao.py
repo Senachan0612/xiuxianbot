@@ -21,6 +21,7 @@ command_success = on_startswith(success_tuple, rule=to_me(), priority=100, block
 cron = Cron(
     style='CD',
     name='牛牛打胶',
+    auto=False,
     msg=xxBot.msg__at_xxbot + Message('打胶 ') + Message(xxBot['niuniu_dajiao_user', ['']][0]),
     feedback_cmd=command_success,
 )
