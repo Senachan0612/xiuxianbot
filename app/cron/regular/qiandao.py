@@ -1,4 +1,4 @@
-"""定时签到"""
+"""定时任务 签到"""
 
 from nonebot.plugin.on import on_startswith
 from nonebot.adapters.onebot.v11 import Message

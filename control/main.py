@@ -42,18 +42,19 @@ async def auto_exec_command():
     bot = xxBot.bot
 
     def _func():
-        for name, (_, matcher, _, msg, at_bot) in xxBot.apps.items():
+        for name, app in xxBot.apps.items():
             if not xxBot.auto_apps.get(name):
                 continue
 
+            matcher, msg, at_bot = app.matcher, app.msg, app.at_bot
             event = GroupMessageEvent(
                 time=0,
                 self_id=bot.self_id,
-                post_type="message",
-                sub_type="normal",
+                post_type='message',
+                sub_type='normal',
                 user_id=xxBot.SuperManagerIds[0],
                 group_id=xxBot.GroupIds[0],
-                message_type="group",
+                message_type='group',
                 message_id=-1,
                 message=msg,
                 raw_message=str(msg),

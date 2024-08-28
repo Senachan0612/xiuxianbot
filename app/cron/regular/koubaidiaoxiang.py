@@ -1,4 +1,4 @@
-"""定时叩拜雕像"""
+"""定时任务 叩拜雕像"""
 
 from nonebot.plugin.on import on_startswith
 from nonebot.adapters.onebot.v11 import Message

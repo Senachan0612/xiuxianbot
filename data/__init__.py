@@ -11,6 +11,8 @@ DataPath = os.path.dirname(__file__)
 
 # 加载数据
 from . import drug
+from . import tupo
+from . import fudu
 
 
 class Data:
@@ -20,11 +22,14 @@ class Data:
     path = DataPath
     # 映射
     DataMap = {
-        'Drug': drug
+        'Drug'.title(): drug,
+        'TuPo'.title(): tupo,
+        'FuDu'.title(): fudu,
     }
 
     def __init__(self):
-        ...
+        for key in self.DataMap:
+            self.load(key)
 
     def __getitem__(self, name):
         """获取数据"""

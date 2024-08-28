@@ -59,6 +59,10 @@ class LoopEvent(Timing):
         if not self.wait_task(index, count=count):
             return
 
+        if type(msg) != list:
+            msg = [msg]
+        msg_len = len(msg)
+
         time_split01 = time // 2
         time_split02 = time - time_split01
         while self.check_task(index):
@@ -66,7 +70,12 @@ class LoopEvent(Timing):
             if count < 0:
                 break
 
-            await cmd.send(msg)
+            for _index, _msg in enumerate(msg, start=1):
+                await cmd.send(_msg)
+                if _index >= msg_len:
+                    break
+                await asyncio.sleep(5)
+
             await asyncio.sleep(time_split01)
             if not self.check_task(index):
                 break

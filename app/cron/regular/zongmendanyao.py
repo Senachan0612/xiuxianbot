@@ -1,4 +1,4 @@
-"""定时宗门丹药"""
+"""定时任务 宗门丹药"""
 
 from nonebot.plugin.on import on_startswith
 from nonebot.adapters.onebot.v11 import Message
