@@ -1,7 +1,5 @@
 """服务任务相关"""
 
-from pypinyin import pinyin, Style
-
 from nonebot.plugin.on import on_fullmatch
 from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
