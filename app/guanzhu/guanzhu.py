@@ -548,7 +548,7 @@ class GuanZhu:
         drug = max(self.drug * 0.01, 0.15)
 
         # 期望血量 -1 * (hp_max * 丹药 + hp_max * 10%) ~ -1
-        expected_hp_min, expected_hp_max = -1 * (hp_max * (drug - 0.1)), -1
+        expected_hp_min, expected_hp_max = -1 * (hp_max * (drug - 0.1025)), -1
         # 期望伤害
         expected_damage_min, expected_damage_max = hp - expected_hp_max, hp - expected_hp_min
         # 理论伤害

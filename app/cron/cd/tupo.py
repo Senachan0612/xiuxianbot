@@ -23,6 +23,7 @@ command_success = on_startswith(success_tuple, rule=to_me(), priority=100, block
 cron = Cron(
     style='CD',
     name='突破',
+    auto=False,
     msg=xxBot.msg__at_xxbot + Message('突破'),
     feedback_cmd=command_success,
 )
@@ -33,7 +34,7 @@ timing, monitor = cron.timing, cron.monitor
 false_tuple = (
     '道友状态不佳，无法突破！',
     '道友的修为不足以突破！',
-    '你没有丹药！',
+    '你没有丹药',
     '超过今日上限，道友莫要心急，请先巩固境界。',
     '道友已是最高境界，无法突破！',
 )

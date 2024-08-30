@@ -22,6 +22,7 @@ command_success = on_startswith(success_tuple, rule=to_me(), priority=100, block
 cron = Cron(
     style='CD',
     name='出闭关',
+    auto=False,
     msg=[
         xxBot.msg__at_xxbot + Message('灵石出关'),
         xxBot.msg__at_xxbot + Message('闭关'),

@@ -21,4 +21,5 @@ cron = Cron(
     name='叩拜雕像',
     msg=xxBot.msg__at_xxbot + Message('叩拜雕像'),
     feedback_cmd=command_success,
+    auto=False,
 )

@@ -6,6 +6,7 @@ from . import Timing
 from . import Config
 
 Loop_Max_Count = float(Config['Loop_Max_Count', 'inf'])
+Loop_Await_Max_Count = float('inf')
 Loop_Send_Time = float(Config['Loop_Send_Time', 10])
 Loop_Await_Time = float(Config['Loop_Await_Time', 1])
 
@@ -83,7 +84,7 @@ class LoopEvent(Timing):
 
         self.finish_task(index, drop=True)
 
-    async def loop_await_cmd(self, index, *, monitor, time=Loop_Await_Time, count=Loop_Max_Count, no_send=False):
+    async def loop_await_cmd(self, index, *, monitor, time=Loop_Await_Time, count=Loop_Await_Max_Count, no_send=False):
         """
             异步等待指令
             no_send: 为T时表示无需等待发送事件
@@ -102,7 +103,7 @@ class LoopEvent(Timing):
 
         self.finish_task(index, drop=no_send)
 
-    async def loop_pause_cmd(self, index, *, monitor, time=Loop_Await_Time, count=Loop_Max_Count):
+    async def loop_pause_cmd(self, index, *, monitor, time=Loop_Await_Time, count=Loop_Await_Max_Count):
         """
             异步暂停指令
         :return:
