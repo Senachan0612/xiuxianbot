@@ -160,7 +160,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
 
 """修改配置"""
 _cmd_set_config__update = ('修改配置', '修改参数', '设置参数')
-_cmd_set_config__update_pattern = rf'({"|".join(_cmd_set_config__update)})\s*(\S*)\s*:\s*(.*)'
+_cmd_set_config__update_pattern = rf'({"|".join(_cmd_set_config__update)})\s*(\S*)\s*[:：]\s*(.*)'
 cmd_set_config__update = on_regex(_cmd_set_config__update_pattern, rule=to_me(), priority=60, block=True)
 _cmd_set_config__update_help = ('配置帮助', '参数帮助', '配置help', '参数help', '配置?', '参数?')
 cmd_set_config__update_help = on_fullmatch(_cmd_set_config__update_help, rule=to_me(), priority=60, block=True)

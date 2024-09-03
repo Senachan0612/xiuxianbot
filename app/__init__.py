@@ -27,12 +27,11 @@ class Task:
     # 监听器
     monitor = False
 
-    # 监听映射
-    handle_map = []
-
     def __init__(self, style, name, auto=True, **kwargs):
         # 任务类型
         self.style = style
+        # 监听映射
+        self.handle_map = []
 
         # 名称 简拼 全拼
         self.name = name

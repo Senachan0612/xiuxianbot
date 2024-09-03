@@ -59,7 +59,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     df_tp = UserData['tupo']
     code_df = df_tp[df_tp['code'] == code]
 
-    if code_df:
+    if not code_df.empty:
         """渡厄丹"""
         is_use = False
         if xxBot.get_config('is_use_due'):
