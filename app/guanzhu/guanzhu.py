@@ -303,9 +303,7 @@ class GuanZhu:
         # 当前倍率
         config = self.Config_Damage
         # 补充倍率
-        range_min, range_max = supply_range
-        # 目标倍率
-        config_min, config_max = config * (1 + range_min), config * (1 + range_max)
+        config_min, config_max = supply_range
         # 根据中位数补充伤害  range_min <= 补充 == range_avg <= range_max
         config_avg = sum((config_min, max(config_min, config_max))) / 2
 
@@ -548,7 +546,7 @@ class GuanZhu:
         drug = max(self.drug * 0.01, 0.15)
 
         # 期望血量 -1 * (hp_max * 丹药 + hp_max * 10%) ~ -1
-        expected_hp_min, expected_hp_max = -1 * (hp_max * (drug - 0.1025)), -1
+        expected_hp_min, expected_hp_max = -1 * (hp_max * (drug - 0.1)) + 1, -1
         # 期望伤害
         expected_damage_min, expected_damage_max = hp - expected_hp_max, hp - expected_hp_min
         # 理论伤害
@@ -566,8 +564,11 @@ class GuanZhu:
         self.HP = result.damage + result.health
         theory_damage_min, theory_damage_max = self.get_expected_harm()
 
-        # 补足伤害
-        return theory_damage_min / result.damage - 1, theory_damage_max / result.damage - 1
+        target_min = theory_damage_min / (result.damage / self.Config_Damage)
+        target_max = theory_damage_max / (result.damage / self.Config_Damage)
+
+        # 期望倍率
+        return target_min, target_max
 
     async def get_battle_combat(self):
         """抢劫"""
@@ -731,7 +732,7 @@ async def __task_running(_cmd, _event, _level):
     """灌注 开始灌注"""
     bot_gz.set_drugs(_level)
 
-    count = 2
+    his_list = []
     while True:
         if not bot_gz or not user_gz:
             return
@@ -748,14 +749,14 @@ async def __task_running(_cmd, _event, _level):
         result = await bot_gz.get_items(supply_range)
 
         # 更换装备
-        if count and any(result or []):
+        if any(result or []) and his_list.count(result) < 1:
             bot_items, user_items = result
             await bot_gz.set_items(bot_items)
             await user_gz.set_items(user_items)
 
-            count -= 2
+            his_list.append(result)
             continue
 
         # 抢劫
         await bot_gz.get_battle_combat()
-        count = 2
+        his_list = []
